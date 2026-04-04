@@ -427,7 +427,7 @@ footer a:hover { color: var(--white); }
       </form>
     </div>
     <div style="display:flex;gap:40px;justify-content:center;flex-wrap:wrap;margin-top:40px;">
-      <div style="text-align:center;"><div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--blue-300);margin-bottom:6px;" data-zh="邮箱" data-en="Email">邮箱</div><a href="mailto:sales@bilateral.top" style="font-size:15px;font-weight:600;color:var(--white);text-decoration:none;">sales@bilateral.top</a></div>
+      <div style="text-align:center;"><div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--blue-300);margin-bottom:6px;" data-zh="邮箱" data-en="Email">邮箱</div><a href="/cdn-cgi/l/email-protection#f685979a9385b6949f9a97829384979ad8829986" style="font-size:15px;font-weight:600;color:var(--white);text-decoration:none;"><span class="__cf_email__" data-cfemail="fb889a979e88bb9992979a8f9e899a97d58f948b">[email&#160;protected]</span></a></div>
       <div style="text-align:center;"><div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--blue-300);margin-bottom:6px;" data-zh="电话" data-en="Phone">电话</div><a href="tel:+8615316555536" style="font-size:15px;font-weight:600;color:var(--white);text-decoration:none;">+86 153-1655-5536</a></div>
     </div>
   </div>
@@ -440,7 +440,7 @@ footer a:hover { color: var(--white); }
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // Auto-detect language from URL parameter
 let currentLang = 'zh';
 (function() {
@@ -456,7 +456,21 @@ function switchLang(lang) {
   document.body.classList.toggle('en', lang === 'en');
   document.querySelectorAll('[data-zh][data-en]').forEach(el => {
     const text = el.getAttribute('data-' + lang);
-    if (!el.querySelector('[data-zh][data-en]')) el.innerHTML = text;
+    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') { el.placeholder = text; }
+    else {
+      const hasTranslatableChildren = el.querySelector('[data-zh][data-en]');
+      if (!hasTranslatableChildren) { el.innerHTML = text; }
+    }
   });
   document.querySelectorAll('.lang-switch button').forEach(btn => {
-    btn.classList.toggle('active', (lang === 'zh' && 
+    btn.classList.toggle('active', (lang === 'zh' && btn.textContent === '中文') || (lang === 'en' && btn.textContent === 'EN'));
+  });
+}
+
+// Apply language on load if parameter was set
+if (currentLang !== 'zh') {
+  switchLang(currentLang);
+}
+</script>
+</body>
+</html>
