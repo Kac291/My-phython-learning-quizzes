@@ -666,7 +666,69 @@ body.loaded .curtain{opacity:0;visibility:hidden;pointer-events:none}
 /* inquiry form inline validation */
 .f-err{display:none;margin-top:7px;font-size:12px;font-weight:500;color:var(--red-bright);letter-spacing:.01em;line-height:1.45}
 .f-field input.err,.f-field textarea.err,.f-field select.err{border-color:var(--red-bright);box-shadow:0 0 0 2px rgba(200,53,31,.12)}
+
+/* FAQ */
+#faq .faq-list{margin-top:clamp(34px,5vh,60px);border-top:1px solid var(--ink)}
+.faq-item{padding:clamp(20px,3vh,32px) 0;border-bottom:1px solid var(--line-soft)}
+.faq-item h3{font-family:var(--serif);font-size:clamp(16px,1.7vw,21px);font-weight:600;letter-spacing:.02em;margin:0 0 10px}
+.faq-item p{font-size:14.5px;line-height:1.72;color:var(--ink-70);max-width:900px}
 </style>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "你们是原厂吗？和 AMAT / NAURA / LAM / SPTS 是什么关系？",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "上海百兰朵是独立的半导体陶瓷零部件制造商，生产与原厂同材料、同等级的 OEM 兼容替换件。文中所有品牌与件号均为各自所有者的商标，仅用于型号识别；我们与原始设备制造商无隶属、授权或背书关系。"
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "提供材料合格证（COC）吗？",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "提供。每一批次都随附材料合格证（COC），证明材料与等级符合要求。"
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "能按原厂件号或图纸定制吗？",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "可以。提供原厂件号即可对照到同等替换件；也支持按图纸或来样全定制开发，精密加工公差可达 ±0.01mm。"
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "你们做哪些材料？",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "氧化铝（Al₂O₃）、碳化硅（SiC）、氮化铝（AlN）、氮化硅（Si₃N₄）、石英等超硬陶瓷材料，配方、烧结到精加工全流程自主可控。"
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "适配哪些设备平台？",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "AMAT、NAURA 北方华创、LAM、SPTS 等；适配 24 家主流半导体设备平台，服务薄膜沉积、刻蚀、离子注入等核心制程。"
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "怎么询价？交期和起订量是多少？",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "发件号或图纸到 sales@bilateral.top，或在官网“询盘”留言，工程团队 24 小时内对接。支持打样与批量，具体交期与起订量按件号和数量确定。"
+   }
+  }
+ ]
+}
+</script>
 </head>
 <body>
 <canvas id="ink"></canvas>
@@ -691,6 +753,7 @@ body.loaded .curtain{opacity:0;visibility:hidden;pointer-events:none}
     <a href="#works" data-zh="产品" data-en="Parts">产品</a>
     <a href="#oem-xref" data-zh="件号" data-en="Part Index">件号</a>
     <a href="#clients" data-zh="客户" data-en="Clients">客户</a>
+    <a href="#faq" data-zh="常见问题" data-en="FAQ">常见问题</a>
     <a href="#contact" class="accent" data-zh="询盘 ↗" data-en="Inquiry ↗">询盘 ↗</a>
   </div>
   <div style="display:flex;align-items:center;gap:22px">
@@ -994,10 +1057,26 @@ body.loaded .curtain{opacity:0;visibility:hidden;pointer-events:none}
     </div>
   </section>
 
+  <!-- ======== 08 FAQ ======== -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="kicker rv"><span class="no">08</span><span class="t">FAQ</span><span class="t-zh">常见问题</span></div>
+      <h2 class="display rv"><span data-zh="常见问题" data-en="Frequently asked questions">常见问题</span><span class="red">。</span></h2>
+      <div class="faq-list rv">
+        <div class="faq-item"><h3 data-zh="你们是原厂吗？和 AMAT / NAURA / LAM / SPTS 是什么关系？" data-en="Are you the OEM? What is your relationship to AMAT / NAURA / LAM / SPTS?">你们是原厂吗？和 AMAT / NAURA / LAM / SPTS 是什么关系？</h3><p data-zh="上海百兰朵是独立的半导体陶瓷零部件制造商，生产与原厂同材料、同等级的 OEM 兼容替换件。文中所有品牌与件号均为各自所有者的商标，仅用于型号识别；我们与原始设备制造商无隶属、授权或背书关系。" data-en="Shanghai Bilateral Electronics is an independent manufacturer of semiconductor ceramic components, producing OEM-equivalent replacement parts built to the same material and grade. All brand names and part numbers are trademarks of their respective owners, used for identification only; we are not affiliated with, authorized by, or endorsed by the original equipment manufacturers.">上海百兰朵是独立的半导体陶瓷零部件制造商，生产与原厂同材料、同等级的 OEM 兼容替换件。文中所有品牌与件号均为各自所有者的商标，仅用于型号识别；我们与原始设备制造商无隶属、授权或背书关系。</p></div>
+        <div class="faq-item"><h3 data-zh="提供材料合格证（COC）吗？" data-en="Do you provide a Certificate of Conformance (COC)?">提供材料合格证（COC）吗？</h3><p data-zh="提供。每一批次都随附材料合格证（COC），证明材料与等级符合要求。" data-en="Yes. Every lot ships with a Certificate of Conformance (COC) verifying that material and grade meet specification.">提供。每一批次都随附材料合格证（COC），证明材料与等级符合要求。</p></div>
+        <div class="faq-item"><h3 data-zh="能按原厂件号或图纸定制吗？" data-en="Can you make parts to an OEM part number or to my drawing?">能按原厂件号或图纸定制吗？</h3><p data-zh="可以。提供原厂件号即可对照到同等替换件；也支持按图纸或来样全定制开发，精密加工公差可达 ±0.01mm。" data-en="Yes. Provide an OEM part number for a cross-referenced equivalent, or we custom-develop from your drawing or sample, with precision machining to ±0.01 mm.">可以。提供原厂件号即可对照到同等替换件；也支持按图纸或来样全定制开发，精密加工公差可达 ±0.01mm。</p></div>
+        <div class="faq-item"><h3 data-zh="你们做哪些材料？" data-en="What materials do you work with?">你们做哪些材料？</h3><p data-zh="氧化铝（Al₂O₃）、碳化硅（SiC）、氮化铝（AlN）、氮化硅（Si₃N₄）、石英等超硬陶瓷材料，配方、烧结到精加工全流程自主可控。" data-en="Alumina (Al₂O₃), silicon carbide (SiC), aluminum nitride (AlN), silicon nitride (Si₃N₄), quartz and other ultra-hard ceramics — formulation, sintering and finishing all in-house.">氧化铝（Al₂O₃）、碳化硅（SiC）、氮化铝（AlN）、氮化硅（Si₃N₄）、石英等超硬陶瓷材料，配方、烧结到精加工全流程自主可控。</p></div>
+        <div class="faq-item"><h3 data-zh="适配哪些设备平台？" data-en="Which equipment platforms do you support?">适配哪些设备平台？</h3><p data-zh="AMAT、NAURA 北方华创、LAM、SPTS 等；适配 24 家主流半导体设备平台，服务薄膜沉积、刻蚀、离子注入等核心制程。" data-en="AMAT, NAURA, LAM, SPTS and more — compatible with 24 major semiconductor tool platforms, serving deposition, etch, ion-implant and other core processes.">AMAT、NAURA 北方华创、LAM、SPTS 等；适配 24 家主流半导体设备平台，服务薄膜沉积、刻蚀、离子注入等核心制程。</p></div>
+        <div class="faq-item"><h3 data-zh="怎么询价？交期和起订量是多少？" data-en="How do I get a quote? What about lead time and MOQ?">怎么询价？交期和起订量是多少？</h3><p data-zh="发件号或图纸到 sales@bilateral.top，或在官网“询盘”留言，工程团队 24 小时内对接。支持打样与批量，具体交期与起订量按件号和数量确定。" data-en="Send a part number or drawing to sales@bilateral.top or use the inquiry form; our engineers respond within 24 hours. Prototyping and volume are both supported; lead time and MOQ depend on the specific part and quantity.">发件号或图纸到 sales@bilateral.top，或在官网“询盘”留言，工程团队 24 小时内对接。支持打样与批量，具体交期与起订量按件号和数量确定。</p></div>
+      </div>
+    </div>
+  </section>
+
   <!-- ======== 07 CONTACT ======== -->
   <section id="contact">
     <div class="wrap">
-      <div class="kicker rv"><span class="no">08</span><span class="t">Contact</span><span class="t-zh">联系</span></div>
+      <div class="kicker rv"><span class="no">09</span><span class="t">Contact</span><span class="t-zh">联系</span></div>
       <div class="contact-grid">
         <div class="contact-left rv">
           <h2><span data-zh="与我们" data-en="Start a">与我们</span><br><span data-zh="开始对话" data-en="conversation">开始对话</span><span style="color:var(--red-bright)">。</span></h2>
@@ -1297,7 +1376,7 @@ langSeg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
 })();
 
 /* ============ running chapter marker ============ */
-const chMap={about:['01','公司','Company'],materials:['02','材料','Materials'],manufacturing:['03','制造','Manufacturing'],precision:['04','精度','Precision'],works:['05','产品','Parts'],'oem-xref':['06','件号','Part Index'],clients:['07','客户','Clients'],contact:['08','联系','Contact']};
+const chMap={about:['01','公司','Company'],materials:['02','材料','Materials'],manufacturing:['03','制造','Manufacturing'],precision:['04','精度','Precision'],works:['05','产品','Parts'],'oem-xref':['06','件号','Part Index'],clients:['07','客户','Clients'],'faq':['08','常见问题','FAQ'],contact:['09','联系','Contact']};
 let curCh=['00','序','Prologue'];
 const chM=document.getElementById('chMarker');
 function updateChapter(){
@@ -1310,7 +1389,7 @@ const chIO=new IntersectionObserver(es=>es.forEach(e=>{
   else{const m=chMap[e.target.id];if(m)curCh=m;}
   updateChapter();
 }),{rootMargin:'-38% 0px -55% 0px',threshold:0});
-document.querySelectorAll('.hero,#about,#materials,#manufacturing,#precision,#works,#oem-xref,#clients,#contact').forEach(s=>chIO.observe(s));
+document.querySelectorAll('.hero,#about,#materials,#manufacturing,#precision,#works,#oem-xref,#clients,#faq,#contact').forEach(s=>chIO.observe(s));
 
 /* ============ inquiry form — AJAX, dual inbox via _cc ============ */
 const form=document.getElementById('inquiryForm'),okBox=document.getElementById('formOk'),btn=document.getElementById('submitBtn');
