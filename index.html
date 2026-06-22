@@ -1091,6 +1091,10 @@ body.loaded .curtain{opacity:0;visibility:hidden;pointer-events:none}
   .xc-proc{grid-column:1/-1;order:5}
 }
 
+
+/* inquiry form inline validation */
+.f-err{display:none;margin-top:7px;font-size:12px;font-weight:500;color:var(--red-bright);letter-spacing:.01em;line-height:1.45}
+.f-field input.err,.f-field textarea.err,.f-field select.err{border-color:var(--red-bright);box-shadow:0 0 0 2px rgba(200,53,31,.12)}
 </style>
 </head>
 <body>
@@ -1436,7 +1440,7 @@ body.loaded .curtain{opacity:0;visibility:hidden;pointer-events:none}
           <div class="online"><span class="dot"></span><span data-zh="工程团队在线 — 24 小时内回复" data-en="Engineers online — reply within 24h">工程团队在线 — 24 小时内回复</span></div>
         </div>
         <div class="contact-right rv">
-          <form id="inquiryForm" action="https://formsubmit.co/sales@bilateral.top" method="POST" novalidate>
+          <form id="inquiryForm" action="https://formsubmit.co/3e1df4376c519106335da6f5a4b9415a" method="POST" novalidate>
             <input type="hidden" name="_cc" value="15316555536@163.com">
             <input type="hidden" name="_subject" value="【官网询盘】新客户询盘 New Website Inquiry">
             <input type="hidden" name="_template" value="table">
@@ -1739,26 +1743,28 @@ document.querySelectorAll('.hero,#about,#materials,#manufacturing,#precision,#wo
 
 /* ============ inquiry form — AJAX, dual inbox via _cc ============ */
 const form=document.getElementById('inquiryForm'),okBox=document.getElementById('formOk'),btn=document.getElementById('submitBtn');
+const fRules=[
+ ['fName',v=>v.trim().length>0,{zh:'请填写姓名',en:'Please enter your name'}],
+ ['fEmail',v=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v.trim()),{zh:'请填写正确的邮箱地址',en:'Please enter a valid email address'}],
+ ['fMsg',v=>v.trim().length>1,{zh:'请填写需求描述（用途、材料、尺寸、数量）',en:'Please describe your requirements'}]
+];
+function fErr(el,msg){el.classList.add('err');let m=el.parentNode.querySelector('.f-err');if(!m){m=document.createElement('div');m.className='f-err';el.parentNode.appendChild(m);}m.textContent=msg;m.style.display='block';}
+function fClear(el){el.classList.remove('err');const m=el.parentNode.querySelector('.f-err');if(m)m.style.display='none';}
+fRules.forEach(([id])=>{const el=document.getElementById(id);if(el){el.addEventListener('input',()=>fClear(el));el.addEventListener('blur',()=>{if(el.value.trim())fClear(el);});}});
 form.addEventListener('submit',async e=>{
-  e.preventDefault();
-  let ok=true;
-  [['fName',v=>v.trim().length>0],['fEmail',v=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)],['fMsg',v=>v.trim().length>1]].forEach(([id,fn])=>{
-    const el=document.getElementById(id),good=fn(el.value);
-    el.classList.toggle('err',!good);
-    if(!good)ok=false;
-  });
-  if(!ok){const first=form.querySelector('.err');if(first)first.focus();return;}
-  btn.disabled=true;
-  btn.querySelector('span').textContent=lang==='zh'?'发送中…':'Sending…';
-  try{
-    const res=await fetch('https://formsubmit.co/ajax/sales@bilateral.top',{
-      method:'POST',headers:{'Accept':'application/json'},body:new FormData(form)});
-    if(!res.ok)throw new Error('status '+res.status);
-    form.style.display='none';
-    okBox.classList.add('show');
-  }catch(err){
-    form.submit();
-  }
+ e.preventDefault();
+ let firstBad=null;
+ fRules.forEach(([id,fn,msg])=>{const el=document.getElementById(id);if(fn(el.value))fClear(el);else{fErr(el,lang==='zh'?msg.zh:msg.en);if(!firstBad)firstBad=el;}});
+ if(firstBad){firstBad.focus();firstBad.scrollIntoView({behavior:'smooth',block:'center'});return;}
+ btn.disabled=true;
+ btn.querySelector('span').textContent=lang==='zh'?'发送中…':'Sending…';
+ try{
+  const res=await fetch('https://formsubmit.co/ajax/3e1df4376c519106335da6f5a4b9415a',{method:'POST',headers:{'Accept':'application/json'},body:new FormData(form)});
+  if(!res.ok)throw new Error('status '+res.status);
+  form.style.display='none';okBox.classList.add('show');
+ }catch(err){
+  form.submit();
+ }
 });
 </script>
 <script>
