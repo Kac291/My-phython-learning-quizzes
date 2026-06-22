@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://www.bilateral.top/sitemap.xml
+Sitemap: https://bilateral.top/sitemap.xml
