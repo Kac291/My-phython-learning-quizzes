@@ -20,7 +20,7 @@
 {
  "@context": "https://schema.org",
  "@type": "Organization",
- "name": "上海百兰朵电子科技有限公司 / Shanghai Bailanduo Electronic Technology Co., Ltd.",
+ "name": "上海百兰朵电子科技有限公司 / Shanghai Bilateral Electronics Technology Co., Ltd.",
  "alternateName": "Bilateral Electronics",
  "url": "https://bilateral.top/",
  "foundingDate": "2009",
@@ -253,9 +253,9 @@
   --bg:#0b0b0c;
   --bg2:#101012;
   --ink:#ece8e0;
-  --ink-70:rgba(236,232,224,.72);
-  --ink-50:rgba(236,232,224,.5);
-  --ink-30:rgba(236,232,224,.3);
+  --ink-70:rgba(236,232,224,.8);
+  --ink-50:rgba(236,232,224,.62);
+  --ink-30:rgba(236,232,224,.42);
   --line:rgba(236,232,224,.12);
   --line-soft:rgba(236,232,224,.07);
   --red:#c8351f;
@@ -269,7 +269,7 @@
 @media(max-width:760px){:root{--pad:var(--gutter)}}
 html[data-theme="light"]{
   --bg:#f3efe6;--bg2:#ebe6da;--ink:#191613;
-  --ink-70:rgba(25,22,19,.78);--ink-50:rgba(25,22,19,.56);--ink-30:rgba(25,22,19,.34);
+  --ink-70:rgba(25,22,19,.84);--ink-50:rgba(25,22,19,.66);--ink-30:rgba(25,22,19,.46);
   --line:rgba(25,22,19,.16);--line-soft:rgba(25,22,19,.09);
   --red:#b5301c;--red-bright:#c8351f;
 }
@@ -649,6 +649,12 @@ body.loaded .curtain{opacity:0;visibility:hidden;pointer-events:none}
 .xc-cta{justify-self:end;font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--ink-50);text-decoration:none;white-space:nowrap;border-bottom:1px solid transparent;transition:all .25s}
 .xc-cta:hover{color:var(--red-bright);border-color:var(--red-bright)}
 .xref-empty{padding:38px 2px;color:var(--ink-50);font-size:14px;line-height:1.6}
+.xref-ask{margin-top:34px;padding:26px 28px;border:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.xref-ask b{display:block;font-weight:500;font-size:17px;color:var(--ink);margin-bottom:6px}
+.xref-ask span{color:var(--ink-70);font-size:14px;line-height:1.7}
+.xref-ask .cta span{color:inherit;font-size:inherit}
+.f-file input[type=file]{width:100%;padding:12px 0;color:var(--ink-70);font:inherit;font-size:13px;border-bottom:1px solid var(--line);background:transparent}
+.f-file .f-hint{display:block;margin-top:6px;font-size:11.5px;color:var(--ink-50)}
 .xref-legal{margin-top:30px;font-size:11.5px;line-height:1.75;color:var(--ink-30);max-width:920px}
 @media(max-width:820px){
   #oem-xref .xref-tools{gap:14px}
@@ -761,10 +767,9 @@ window.bldConv=function(){
 <div class="nav-links" id="navLinks">
 <a data-en="Company" data-zh="公司" href="#about">Company</a>
 <a data-en="Materials" data-zh="材料" href="#materials">Materials</a>
-<a data-en="Manufacturing" data-zh="制造" href="#manufacturing">Manufacturing</a>
-<a data-en="Precision" data-zh="精度" href="#precision">Precision</a>
+<a data-en="Capabilities" data-zh="制造能力" href="#manufacturing">Capabilities</a>
 <a data-en="Parts" data-zh="产品" href="#works">Parts</a>
-<a data-en="Part Index" data-zh="件号" href="#oem-xref">Part Index</a>
+<a data-en="Part No." data-zh="件号查询" href="#oem-xref">Part No.</a>
 <a data-en="Clients" data-zh="客户" href="#clients">Clients</a>
 <a data-en="FAQ" data-zh="常见问题" href="#faq">FAQ</a>
 <a class="accent" data-en="Inquiry ↗" data-zh="询盘 ↗" href="#contact">Inquiry ↗</a>
@@ -788,12 +793,12 @@ window.bldConv=function(){
 <span class="mask ln2"><span><span data-en="born of " data-zh="成于">born of </span><span class="last" data-en="ceramics" data-zh="陶瓷">ceramics</span><span data-en="." data-zh="。">.</span></span></span>
 </h1>
 <div class="hero-foot">
-<p class="hero-sub rv" data-en="Backed by the Shanghai Institute of Ceramics and Ningbo Institute of Materials, Chinese Academy of Sciences, we engineer precision parts in alumina, silicon carbide and aluminum nitride for the global semiconductor equipment industry." data-zh="依托中国科学院上海硅酸盐研究所与宁波材料所，我们为全球半导体设备产业链研制氧化铝、碳化硅、氮化铝等超硬材料精密零部件。">Backed by the Shanghai Institute of Ceramics and Ningbo Institute of Materials, Chinese Academy of Sciences, we engineer precision parts in alumina, silicon carbide and aluminum nitride for the global semiconductor equipment industry.</p>
+<p class="hero-sub rv" data-en="&lt;b&gt;OEM-equivalent ceramic replacement parts&lt;/b&gt; for &lt;b&gt;AMAT, LAM, SPTS &amp;amp; NAURA&lt;/b&gt; tools — search by OEM part number, COC with every lot. Backed by the Chinese Academy of Sciences." data-zh="为 &lt;b&gt;AMAT、LAM、SPTS、北方华创&lt;/b&gt; 等设备提供 &lt;b&gt;OEM 同等陶瓷替换件&lt;/b&gt;——可按原厂件号查找，每批附 COC 合格证。依托中国科学院上海硅酸盐研究所与宁波材料所。"><b>OEM-equivalent ceramic replacement parts</b> for <b>AMAT, LAM, SPTS &amp; NAURA</b> tools — search by OEM part number, COC with every lot. Backed by the Chinese Academy of Sciences.</p>
 <div class="hero-meta rv">31.05°N  121.18°E<br/>SHANGHAI · NINGBO · PINGXIANG<br/>ISO 9001 CERTIFIED</div>
 </div>
 <div class="hero-cta-row rv">
-<a class="cta" href="#contact"><span data-en="Submit Inquiry" data-zh="提交询盘">Submit Inquiry</span><span class="ar">→</span></a>
-<a class="cta-line" data-en="Read on" data-zh="进入正文" href="#about">Read on</a>
+<a class="cta" href="#oem-xref"><span data-en="Search Part Numbers" data-zh="按件号查找">Search Part Numbers</span><span class="ar">→</span></a>
+<a class="cta-line" data-en="Request a Quote" data-zh="询价 / 发图纸" href="#contact">Request a Quote</a>
 </div>
 <div class="hero-toc rv">
 <a href="#about"><i>01</i><span data-en="Company" data-zh="公司">Company</span></a>
@@ -801,8 +806,9 @@ window.bldConv=function(){
 <a href="#manufacturing"><i>03</i><span data-en="Manufacturing" data-zh="制造">Manufacturing</span></a>
 <a href="#precision"><i>04</i><span data-en="Precision" data-zh="精度">Precision</span></a>
 <a href="#works"><i>05</i><span data-en="Parts" data-zh="产品">Parts</span></a>
-<a href="#clients"><i>06</i><span data-en="Clients" data-zh="客户">Clients</span></a>
-<a href="#contact"><i>07</i><span data-en="Contact" data-zh="联系">Contact</span></a>
+<a href="#oem-xref"><i>06</i><span data-en="Part No." data-zh="件号">Part No.</span></a>
+<a href="#clients"><i>07</i><span data-en="Clients" data-zh="客户">Clients</span></a>
+<a href="#contact"><i>09</i><span data-en="Contact" data-zh="联系">Contact</span></a>
 </div>
 </header>
 <!-- ======== 01 COMPANY ======== -->
@@ -1033,7 +1039,14 @@ window.bldConv=function(){
 <div class="xref-row" data-b="SPTS" data-s="spts spts 707095 dsi-v endpoint chamber etch (spts)"><span class="xc-brand">SPTS</span><span class="xc-no">707095</span><span class="xc-desc">DSI-V Endpoint Chamber</span><span class="xc-proc">Etch (SPTS)</span><a class="xc-cta" data-en="Inquire ↗" data-pn="707095" data-zh="询价 ↗" href="#contact">Inquire ↗</a></div>
 <div class="xref-empty" data-en="No match — try another keyword, or send us an inquiry and we will quote from your drawing." data-zh="未找到匹配的件号——换个关键词，或直接发询盘，我们按图纸报价。" hidden="" id="xrefEmpty">No match — try another keyword, or send us an inquiry and we will quote from your drawing.</div>
 </div>
-<p class="xref-legal rv" data-en="Every part is built to OEM-equivalent material &amp; grade and ships with a Certificate of Conformance (COC). All OEM brand names and part numbers are trademarks of their respective owners and are used for identification only; Shanghai Bailanduo manufactures OEM-compatible replacement parts and is not affiliated with, authorized by, or endorsed by the original equipment manufacturers." data-zh="每件均按与原厂同材料、同等级制造，并随批附材料合格证（COC）。文中所有原厂品牌与件号均为各自所有者的商标，仅用于型号识别；上海百兰朵生产 OEM 兼容替换件，与原始设备制造商无隶属、授权或背书关系。">Every part is built to OEM-equivalent material &amp; grade and ships with a Certificate of Conformance (COC). All OEM brand names and part numbers are trademarks of their respective owners and are used for identification only; Shanghai Bailanduo manufactures OEM-compatible replacement parts and is not affiliated with, authorized by, or endorsed by the original equipment manufacturers.</p>
+<div class="xref-ask rv">
+<div>
+<b data-en="Can't find your part number?" data-zh="没找到你的件号？">Can't find your part number?</b>
+<span data-en="This list is only a sample. Send us the OEM part number, a drawing or a photo — our engineers will quote from it." data-zh="表中只列了部分件号。把原厂件号、图纸或照片发给我们，工程师按图报价。">This list is only a sample. Send us the OEM part number, a drawing or a photo — our engineers will quote from it.</span>
+</div>
+<a class="cta" href="#contact"><span data-en="Send Part No. / Drawing" data-zh="发件号 / 图纸询价">Send Part No. / Drawing</span><span class="ar">→</span></a>
+</div>
+<p class="xref-legal rv" data-en="Every part is built to OEM-equivalent material &amp; grade and ships with a Certificate of Conformance (COC). All OEM brand names and part numbers are trademarks of their respective owners and are used for identification only; Shanghai Bilateral Electronics manufactures OEM-compatible replacement parts and is not affiliated with, authorized by, or endorsed by the original equipment manufacturers." data-zh="每件均按与原厂同材料、同等级制造，并随批附材料合格证（COC）。文中所有原厂品牌与件号均为各自所有者的商标，仅用于型号识别；上海百兰朵生产 OEM 兼容替换件，与原始设备制造商无隶属、授权或背书关系。">Every part is built to OEM-equivalent material &amp; grade and ships with a Certificate of Conformance (COC). All OEM brand names and part numbers are trademarks of their respective owners and are used for identification only; Shanghai Bilateral Electronics manufactures OEM-compatible replacement parts and is not affiliated with, authorized by, or endorsed by the original equipment manufacturers.</p>
 </div>
 </section>
 <!-- ======== 07 CLIENTS ======== -->
@@ -1087,7 +1100,8 @@ window.bldConv=function(){
 <div class="online"><span class="dot"></span><span data-en="Engineers online — reply within 24h" data-zh="工程团队在线 — 24 小时内回复">Engineers online — reply within 24h</span></div>
 </div>
 <div class="contact-right rv">
-<form action="https://formsubmit.co/3e1df4376c519106335da6f5a4b9415a" id="inquiryForm" method="POST" novalidate="">
+<form action="https://formsubmit.co/3e1df4376c519106335da6f5a4b9415a" enctype="multipart/form-data" id="inquiryForm" method="POST" novalidate="">
+<input name="_next" type="hidden" value="https://bilateral.top/en/?sent=1#contact"/>
 <input name="_cc" type="hidden" value="15316555536@163.com"/>
 <input name="_subject" type="hidden" value="【官网询盘】新客户询盘 New Website Inquiry"/>
 <input name="_template" type="hidden" value="table"/>
@@ -1108,13 +1122,16 @@ window.bldConv=function(){
 <option value="碳化硅 SiC">SiC 碳化硅</option>
 <option value="氮化铝 AlN">AlN 氮化铝</option>
 <option value="氮化硅 Si₃N₄">Si₃N₄ 氮化硅</option>
+<option value="氧化锆 ZrO₂">ZrO₂ 氧化锆</option>
+<option value="石英 Quartz">Quartz 石英</option>
 <option data-en="Heater / Susceptor" data-zh="加热器 / 载盘" value="加热器/载盘 Heater">Heater / Susceptor</option>
 <option data-en="Machined parts" data-zh="精密加工件" value="精密加工件 Machined">Machined parts</option>
 <option data-en="Custom development" data-zh="定制开发" value="定制开发 Custom">Custom development</option>
 <option data-en="Other" data-zh="其他" value="其他 Other">Other</option>
 </select>
 </div>
-<div class="f-field"><label data-en="Requirements ·Required" data-zh="需求描述 ·必填">Requirements ·Required</label><textarea data-ph-en="Application, material, dimensions, tolerances and quantity. Attach drawings by email if available." data-ph-zh="零件用途、材料、尺寸、精度要求与数量；如有图纸请在邮件中附上。" id="fMsg" name="需求 Message" placeholder="Application, material, dimensions, tolerances and quantity. Attach drawings by email if available." required=""></textarea></div>
+<div class="f-field"><label data-en="Requirements ·Required" data-zh="需求描述 ·必填">Requirements ·Required</label><textarea data-ph-en="OEM part number (if any), application, material, dimensions, tolerances and quantity." data-ph-zh="原厂件号（如有）、零件用途、材料、尺寸、精度要求与数量。" id="fMsg" name="需求 Message" placeholder="OEM part number (if any), application, material, dimensions, tolerances and quantity." required=""></textarea></div>
+<div class="f-field f-file"><label data-en="Drawing / Photo (optional)" data-zh="上传图纸 / 照片（可选）">Drawing / Photo (optional)</label><input accept=".pdf,.dwg,.dxf,.step,.stp,.igs,.iges,.png,.jpg,.jpeg,.zip" id="fFile" name="attachment" type="file"/><span class="f-hint" data-en="PDF / DWG / DXF / STEP / IGES / JPG / PNG / ZIP, max 10 MB. For larger files, zip them or email sales@bilateral.top" data-zh="支持 PDF / DWG / DXF / STEP / IGES / JPG / PNG / ZIP，单个文件不超过 10MB。文件较大请压缩后上传，或发邮件至 sales@bilateral.top">PDF / DWG / DXF / STEP / IGES / JPG / PNG / ZIP, max 10 MB. For larger files, zip them or email sales@bilateral.top</span></div>
 <div class="f-bottom">
 <button class="cta" id="submitBtn" type="submit"><span data-en="Send Inquiry" data-zh="发送询盘">Send Inquiry</span><span class="ar">→</span></button>
 <p class="f-note" data-en="Delivered to both sales &amp; management · strictly confidential" data-zh="询盘将同时送达销售与负责人邮箱 · 严格保密">Delivered to both sales &amp; management · strictly confidential</p>
@@ -1159,7 +1176,7 @@ window.__themeL=0;
   const root=document.documentElement;
   const autoTheme=()=>{const hr=new Date().getHours();return (hr>=7&&hr<19)?'light':'dark';};
   let saved=null;try{saved=localStorage.getItem('bld-theme');}catch(e){}
-  let cur=saved||autoTheme();
+  let cur=saved||'light';
   function apply(t){
     cur=t;root.dataset.theme=t;window.__themeL=(t==='light')?1:0;
     const b=document.getElementById('themeBtn');if(b)b.textContent=(t==='light')?'☾':'☀';
@@ -1369,7 +1386,7 @@ langSeg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
 })();
 
 /* ============ running chapter marker ============ */
-const chMap={about:['01','公司','Company'],materials:['02','材料','Materials'],manufacturing:['03','制造','Manufacturing'],precision:['04','精度','Precision'],works:['05','产品','Parts'],'oem-xref':['06','件号','Part Index'],clients:['07','客户','Clients'],'faq':['08','常见问题','FAQ'],contact:['09','联系','Contact']};
+const chMap={about:['01','公司','Company'],materials:['02','材料','Materials'],manufacturing:['03','制造','Manufacturing'],precision:['04','精度','Precision'],works:['05','产品','Parts'],'oem-xref':['06','件号','Part No.'],clients:['07','客户','Clients'],'faq':['08','常见问题','FAQ'],contact:['09','联系','Contact']};
 let curCh=['00','序','Prologue'];
 const chM=document.getElementById('chMarker');
 function updateChapter(){
@@ -1399,8 +1416,12 @@ form.addEventListener('submit',async e=>{
  let firstBad=null;
  fRules.forEach(([id,fn,msg])=>{const el=document.getElementById(id);if(fn(el.value))fClear(el);else{fErr(el,lang==='zh'?msg.zh:msg.en);if(!firstBad)firstBad=el;}});
  if(firstBad){firstBad.focus();firstBad.scrollIntoView({behavior:'smooth',block:'center'});return;}
+ const fFile=document.getElementById('fFile');
+ const hasFile=fFile&&fFile.files&&fFile.files.length>0;
+ if(hasFile&&fFile.files[0].size>10*1024*1024){fErr(fFile,lang==='zh'?'文件超过 10MB，请压缩后再传，或直接发邮件至 sales@bilateral.top':'File exceeds 10 MB — please zip it or email sales@bilateral.top');fFile.scrollIntoView({behavior:'smooth',block:'center'});return;}
  btn.disabled=true;
  btn.querySelector('span').textContent=lang==='zh'?'发送中…':'Sending…';
+ if(hasFile){bldConv();setTimeout(()=>form.submit(),300);return;}
  try{
   const res=await fetch('https://formsubmit.co/ajax/3e1df4376c519106335da6f5a4b9415a',{method:'POST',headers:{'Accept':'application/json'},body:new FormData(form)});
   if(!res.ok)throw new Error('status '+res.status);
@@ -1411,6 +1432,11 @@ form.addEventListener('submit',async e=>{
   form.submit();
  }
 });
+(function(){const ff=document.getElementById('fFile');if(ff)ff.addEventListener('change',()=>fClear(ff));
+ if(/[?&]sent=1/.test(location.search)){form.style.display='none';okBox.classList.add('show');
+  try{history.replaceState(null,'',location.pathname+'#contact');}catch(e){}
+  setTimeout(()=>{const c=document.getElementById('contact');if(c)c.scrollIntoView();},400);}
+})();
 </script>
 <script>
 /* ============ OEM cross-reference: live search + filter ============ */
