@@ -372,7 +372,7 @@ h2.display .red{color:var(--red-bright)}
 .hero-eyebrow{display:flex;align-items:center;gap:16px;margin-bottom:clamp(28px,4vh,44px)}
 .hero-eyebrow img{height:64px;width:auto}
 .hero-eyebrow .tx{font-family:var(--mono);font-size:10.5px;letter-spacing:.4em;color:var(--ink-50);text-transform:uppercase;line-height:2.2}
-.hero h1{font-family:var(--serif);font-weight:900;font-size:clamp(54px,10.5vw,168px);line-height:1.12;letter-spacing:.06em}
+.hero h1{font-family:var(--serif);font-weight:900;font-size:clamp(48px,min(10.5vw,16vh),168px);line-height:1.12;letter-spacing:.06em}
 .hero h1 .ln2 .last{color:var(--red-bright)}
 .hero-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-top:clamp(36px,6vh,64px);flex-wrap:wrap}
 .hero-sub{max-width:520px;color:var(--ink-50);font-size:clamp(14px,1.15vw,16px)}
@@ -649,6 +649,14 @@ body.loaded .curtain{opacity:0;visibility:hidden;pointer-events:none}
 .xc-cta{justify-self:end;font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--ink-50);text-decoration:none;white-space:nowrap;border-bottom:1px solid transparent;transition:all .25s}
 .xc-cta:hover{color:var(--red-bright);border-color:var(--red-bright)}
 .xref-empty{padding:38px 2px;color:var(--ink-50);font-size:14px;line-height:1.6}
+.xref-more{display:block;width:100%;margin-top:0;padding:16px;border:1px solid var(--line);border-top:none;background:transparent;color:var(--ink-70);font-family:var(--mono);font-size:12px;letter-spacing:.16em;cursor:pointer;transition:color .3s,background .3s}
+.xref-more:hover{color:var(--ink);background:var(--line-soft)}
+.xref-more[hidden]{display:none}
+.nav-links a{white-space:nowrap}
+.brand,.brand .zh,.brand .en{white-space:nowrap;flex-shrink:0}
+@media(max-width:1400px){.brand .en{display:none}.nav-links{gap:clamp(14px,1.7vw,30px)}.nav-links a{letter-spacing:.12em}}
+@media(min-width:901px) and (max-width:1120px){.nav-links{gap:12px}.nav-links a{letter-spacing:.05em;font-size:11px}.nav-links a.accent{padding:8px 12px}}
+@media(max-width:760px){.hero-meta{display:none}}
 .xref-ask{margin-top:34px;padding:26px 28px;border:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
 .xref-ask b{display:block;font-weight:500;font-size:17px;color:var(--ink);margin-bottom:6px}
 .xref-ask span{color:var(--ink-70);font-size:14px;line-height:1.7}
@@ -812,6 +820,7 @@ window.bldConv=function(){
       <a href="#works"><i>05</i><span data-zh="产品" data-en="Parts">产品</span></a>
       <a href="#oem-xref"><i>06</i><span data-zh="件号" data-en="Part No.">件号</span></a>
       <a href="#clients"><i>07</i><span data-zh="客户" data-en="Clients">客户</span></a>
+      <a href="#faq"><i>08</i><span data-zh="常见问题" data-en="FAQ">常见问题</span></a>
       <a href="#contact"><i>09</i><span data-zh="联系" data-en="Contact">联系</span></a>
     </div>
   </header>
@@ -1053,6 +1062,7 @@ window.bldConv=function(){
         <div class="xref-row" data-b="SPTS" data-s="spts spts 707095 dsi-v endpoint chamber etch (spts)"><span class="xc-brand">SPTS</span><span class="xc-no">707095</span><span class="xc-desc">DSI-V Endpoint Chamber</span><span class="xc-proc">Etch (SPTS)</span><a class="xc-cta" href="#contact" data-pn="707095" data-zh="询价 ↗" data-en="Inquire ↗">询价 ↗</a></div>
         <div class="xref-empty" id="xrefEmpty" hidden data-zh="未找到匹配的件号——换个关键词，或直接发询盘，我们按图纸报价。" data-en="No match — try another keyword, or send us an inquiry and we will quote from your drawing.">未找到匹配的件号——换个关键词，或直接发询盘，我们按图纸报价。</div>
       </div>
+      <button class="xref-more" hidden id="xrefMore" type="button"><span data-zh="展开全部 39 个件号 ↓" data-en="Show all 39 part numbers ↓">展开全部 39 个件号 ↓</span></button>
 
       <div class="xref-ask rv">
         <div>
@@ -1137,12 +1147,12 @@ window.bldConv=function(){
             <div class="f-field"><label data-zh="意向材料 / 产品" data-en="Material / Product">意向材料 / 产品</label>
               <select name="意向 Interest">
                 <option value="" data-zh="请选择（可选）" data-en="Select (optional)">请选择（可选）</option>
-                <option value="氧化铝 Al₂O₃">Al₂O₃ 氧化铝</option>
-                <option value="碳化硅 SiC">SiC 碳化硅</option>
-                <option value="氮化铝 AlN">AlN 氮化铝</option>
-                <option value="氮化硅 Si₃N₄">Si₃N₄ 氮化硅</option>
-                <option value="氧化锆 ZrO₂">ZrO₂ 氧化锆</option>
-                <option value="石英 Quartz">Quartz 石英</option>
+                <option value="氧化铝 Al₂O₃" data-zh="氧化铝 Al₂O₃" data-en="Alumina (Al₂O₃)">氧化铝 Al₂O₃</option>
+                <option value="碳化硅 SiC" data-zh="碳化硅 SiC" data-en="Silicon Carbide (SiC)">碳化硅 SiC</option>
+                <option value="氮化铝 AlN" data-zh="氮化铝 AlN" data-en="Aluminum Nitride (AlN)">氮化铝 AlN</option>
+                <option value="氮化硅 Si₃N₄" data-zh="氮化硅 Si₃N₄" data-en="Silicon Nitride (Si₃N₄)">氮化硅 Si₃N₄</option>
+                <option value="氧化锆 ZrO₂" data-zh="氧化锆 ZrO₂" data-en="Zirconia (ZrO₂)">氧化锆 ZrO₂</option>
+                <option value="石英 Quartz" data-zh="石英 Quartz" data-en="Quartz / Fused Silica">石英 Quartz</option>
                 <option value="加热器/载盘 Heater" data-zh="加热器 / 载盘" data-en="Heater / Susceptor">加热器 / 载盘</option>
                 <option value="精密加工件 Machined" data-zh="精密加工件" data-en="Machined parts">精密加工件</option>
                 <option value="定制开发 Custom" data-zh="定制开发" data-en="Custom development">定制开发</option>
@@ -1184,7 +1194,7 @@ window.bldConv=function(){
   </div>
 </footer>
 
-<button class="fab" id="fabBtn"><span class="dot"></span><span data-zh="询盘 · INQUIRY" data-en="INQUIRY · 询盘">询盘 · INQUIRY</span></button>
+<button class="fab" id="fabBtn"><span class="dot"></span><span data-zh="询价 · 发图纸" data-en="Get a Quote">询价 · 发图纸</span></button>
 
 <div class="lightbox" id="lightbox">
   <button class="x" aria-label="close">✕</button>
@@ -1470,20 +1480,24 @@ form.addEventListener('submit',async e=>{
   var chips=[].slice.call(sec.querySelectorAll('.xchip'));
   var nEl=document.getElementById('xrefN');
   var empty=document.getElementById('xrefEmpty');
-  var flt='ALL', q='';
+  var flt='ALL', q='', expanded=false, LIMIT=12;
+  var more=document.getElementById('xrefMore');
   function norm(s){return (s||'').toLowerCase().replace(/[\s\-_,.\/]+/g,'');}
   function apply(){
-    var qn=norm(q), shown=0;
+    var qn=norm(q), shown=0, limited=!expanded && !qn && flt==='ALL';
     rows.forEach(function(r){
       var okB = flt==='ALL' || r.getAttribute('data-b')===flt;
       var okQ = !qn || norm(r.getAttribute('data-s')).indexOf(qn)>=0;
       var vis = okB && okQ;
-      r.style.display = vis ? '' : 'none';
       if(vis) shown++;
+      r.style.display = (vis && !(limited && shown>LIMIT)) ? '' : 'none';
     });
     nEl.textContent = shown;
     empty.hidden = shown!==0;
+    if(more) more.hidden = !(limited && shown>LIMIT);
   }
+  if(more) more.addEventListener('click', function(){ expanded=true; apply(); });
+  apply();
   input.addEventListener('input', function(){ q=input.value; apply(); });
   chips.forEach(function(c){ c.addEventListener('click', function(){
     chips.forEach(function(x){ x.classList.remove('on'); });
