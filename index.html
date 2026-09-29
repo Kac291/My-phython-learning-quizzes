@@ -754,9 +754,11 @@ gtag('config','G-3X69MHYF3K');
 gtag('config','AW-18467829651');
 /* Google Ads 转化标签：建好"官网询盘提交"转化后，把 label 填进来 */
 window.BLD_ADS={id:'AW-18467829651',label:''};
-window.bldConv=function(){
+window.bldConv=function(programmatic){
   try{
     gtag('event','generate_lead',{form:'inquiry',page_lang:document.documentElement.lang});
+    /* 带附件时表单由脚本提交，不会触发浏览器 submit 事件，这里手动补发 form_submit，供 Google Ads"表單"转化识别 */
+    if(programmatic){gtag('event','form_submit',{form_id:'inquiryForm',form_destination:'formsubmit.co'});}
     if(BLD_ADS.label){gtag('event','conversion',{send_to:BLD_ADS.id+'/'+BLD_ADS.label});}
   }catch(e){}
 };
@@ -1466,7 +1468,7 @@ form.addEventListener('submit',async e=>{
  if(hasFile&&fFile.files[0].size>10*1024*1024){fErr(fFile,lang==='zh'?'文件超过 10MB，请压缩后再传，或直接发邮件至 sales@bilateral.top':'File exceeds 10 MB — please zip it or email sales@bilateral.top');fFile.scrollIntoView({behavior:'smooth',block:'center'});return;}
  btn.disabled=true;
  btn.querySelector('span').textContent=lang==='zh'?'发送中…':'Sending…';
- if(hasFile){bldConv();setTimeout(()=>form.submit(),300);return;}
+ if(hasFile){bldConv(true);setTimeout(()=>form.submit(),300);return;}
  try{
   const res=await fetch('https://formsubmit.co/ajax/3e1df4376c519106335da6f5a4b9415a',{method:'POST',headers:{'Accept':'application/json'},body:new FormData(form)});
   if(!res.ok)throw new Error('status '+res.status);
