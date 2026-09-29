@@ -744,20 +744,31 @@ body.loaded .curtain{opacity:0;visibility:hidden;pointer-events:none}
  ]
 }
 </script>
-<!-- ===== Google Ads 转化跟踪：拿到 ID 后只需填下面两个值 ===== -->
+<!-- ===== Google 代码：GA4 (G-3X69MHYF3K) + Google Ads (AW-18467829651) ===== -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3X69MHYF3K"></script>
 <script>
-window.BLD_ADS={id:'',label:''}; /* 例：id:'AW-123456789', label:'AbCdEfGhIj' */
 window.dataLayer=window.dataLayer||[];
-window.gtag=window.gtag||function(){dataLayer.push(arguments);};
-if(BLD_ADS.id){
-  var s=document.createElement('script');s.async=true;
-  s.src='https://www.googletagmanager.com/gtag/js?id='+BLD_ADS.id;
-  document.head.appendChild(s);
-  gtag('js',new Date());gtag('config',BLD_ADS.id);
-}
+function gtag(){dataLayer.push(arguments);}
+gtag('js',new Date());
+gtag('config','G-3X69MHYF3K');
+gtag('config','AW-18467829651');
+/* Google Ads 转化标签：建好"官网询盘提交"转化后，把 label 填进来 */
+window.BLD_ADS={id:'AW-18467829651',label:''};
 window.bldConv=function(){
-  try{if(BLD_ADS.id&&BLD_ADS.label){gtag('event','conversion',{send_to:BLD_ADS.id+'/'+BLD_ADS.label});}}catch(e){}
+  try{
+    gtag('event','generate_lead',{form:'inquiry',page_lang:document.documentElement.lang});
+    if(BLD_ADS.label){gtag('event','conversion',{send_to:BLD_ADS.id+'/'+BLD_ADS.label});}
+  }catch(e){}
 };
+/* 关键点击统计：件号询价、邮箱、电话 */
+document.addEventListener('click',function(e){
+  try{
+    var a=e.target.closest('a'); if(!a) return;
+    if(a.classList.contains('xc-cta')) gtag('event','part_inquire',{part_no:a.getAttribute('data-pn')});
+    else if((a.getAttribute('href')||'').indexOf('mailto:')===0) gtag('event','email_click');
+    else if((a.getAttribute('href')||'').indexOf('tel:')===0) gtag('event','phone_click');
+  }catch(err){}
+},true);
 </script>
 </head>
 <body>
