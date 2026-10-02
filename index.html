@@ -1495,11 +1495,15 @@ function showOk(){let t=false;['touchstart','wheel'].forEach(ev=>window.addEvent
 /* 手机端：点“询价”直接定位到表单第一栏，而不是联系区块的标题 */
 (function(){
  const mob=()=>window.innerWidth<=900;
- const once=(smooth)=>{const f=document.getElementById('inquiryForm');if(!f||f.style.display==='none')return;const y=f.getBoundingClientRect().top+window.scrollY-76;window.scrollTo({top:y,behavior:smooth?'smooth':'instant'});};
+ /* 用布局位置（不受入场动画 translateY 影响）计算，并直接跳转，避免先偏后挪 */
+ const posOf=el=>{let y=0;while(el){y+=el.offsetTop;el=el.offsetParent;}return y;};
+ const once=()=>{const f=document.getElementById('inquiryForm');if(!f||f.style.display==='none')return;
+  document.querySelectorAll('#contact .rv').forEach(r=>r.classList.add('on'));
+  const y=Math.max(0,posOf(f)-76);if(Math.abs(window.scrollY-y)>6)window.scrollTo({top:y,behavior:'instant'});};
  /* 滚动途中上方图片加载会把表单往下推，所以到位后再校正两次 */
  let touched=false;['touchstart','wheel','keydown'].forEach(ev=>window.addEventListener(ev,()=>{touched=true;},{passive:true}));
- const fix=()=>{if(!touched)once(false);};
- const toForm=(smooth)=>{touched=false;once(smooth);setTimeout(fix,smooth?900:400);setTimeout(fix,1600);};
+ const fix=()=>{if(!touched)once();};
+ const toForm=()=>{touched=false;once();setTimeout(fix,300);};
  window.bldToForm=toForm;
  document.addEventListener('click',e=>{const a=e.target.closest('a[href="#contact"]');if(!a||!mob())return;e.preventDefault();try{history.replaceState(null,'','#contact');}catch(_){}setTimeout(()=>toForm(true),80);});
  if(location.hash==='#contact'&&mob()&&!/[?&]sent=1/.test(location.search)){setTimeout(()=>toForm(false),350);setTimeout(()=>toForm(false),1300);}
