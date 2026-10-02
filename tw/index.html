@@ -56,7 +56,13 @@
     html=html.split('https://bilateral.top/?sent=1#contact').join('https://bilateral.top/tw/?sent=1#contact');
     html=html.replace('<button type="button" data-l="zh" class="on">簡</button><button type="button" data-href="/tw/" data-save="tw">繁</button><button type="button" data-l="en">EN</button>',
       '<button type="button" data-href="/" data-save="zh">簡</button><button type="button" data-l="zh" class="on">繁</button><button type="button" data-href="/en/" data-save="en">EN</button>');
+    var hash=location.hash;
     document.open();document.write(html);document.close();
+    /* 站內連結（#contact 等）在內容寫入後再捲動到對應區塊 */
+    if(hash&&hash.length>1){
+      var go=function(){var el=document.getElementById(hash.slice(1));if(el)el.scrollIntoView();};
+      setTimeout(go,300);setTimeout(go,1200);
+    }
   }
   var tries=0;
   function load(){
