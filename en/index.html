@@ -1400,7 +1400,11 @@ function setLang(l){
     :'Semiconductor Ceramic Parts · OEM Cross-Reference (AMAT/NAURA/LAM/SPTS) | Shanghai Bilateral Electronics';
 }
 langSeg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
-  if(b.dataset.href){try{localStorage.setItem('bld-lang',b.dataset.save||'zh');}catch(e){} location.href=b.dataset.href; return;}
+  if(b.dataset.href){try{localStorage.setItem('bld-lang',b.dataset.save||'zh');}catch(e){}
+    /* Remember the current section + offset so the other-language page opens at the same spot */
+    try{let best=null;document.querySelectorAll('section[id]').forEach(s=>{const r=s.getBoundingClientRect();if(r.top<=window.innerHeight*0.3&&r.bottom>0)best=s;});
+      if(best)sessionStorage.setItem('bld-pos',JSON.stringify({id:best.id,off:Math.round(-best.getBoundingClientRect().top),t:Date.now()}));}catch(e){}
+    location.href=b.dataset.href; return;}
   if(b.dataset.l!==lang){setLang(b.dataset.l);try{localStorage.setItem('bld-lang',b.dataset.l);}catch(e){}}
 }));
 /* auto-detect visitor language on first visit */
@@ -1478,6 +1482,11 @@ function showOk(){let t=false;['touchstart','wheel'].forEach(ev=>window.addEvent
  const toForm=()=>{touched=false;once();setTimeout(fix,300);};
  window.bldToForm=toForm;
  document.addEventListener('click',e=>{const a=e.target.closest('a[href="#contact"]');if(!a||!mob())return;e.preventDefault();try{history.replaceState(null,'','#contact');}catch(_){}setTimeout(()=>toForm(true),80);});
+ /* Arriving from a 简/繁 switch: return to the same section */
+ try{const p=JSON.parse(sessionStorage.getItem('bld-pos')||'null');
+  if(p&&Date.now()-p.t<20000&&!location.hash){sessionStorage.removeItem('bld-pos');
+   const go=()=>{const s=document.getElementById(p.id);if(!s)return;s.querySelectorAll('.rv').forEach(r=>r.classList.add('on'));window.scrollTo({top:Math.max(0,posOf(s)+p.off),behavior:'instant'});};
+   go();setTimeout(()=>{if(!touched)go();},300);}}catch(e){}
  if(location.hash==='#contact'&&mob()&&!/[?&]sent=1/.test(location.search)){setTimeout(()=>toForm(false),350);setTimeout(()=>toForm(false),1300);}
 })();
 </script>
