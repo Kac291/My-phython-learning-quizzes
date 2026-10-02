@@ -1313,7 +1313,8 @@ const burger=document.getElementById('burger'),navLinks=document.getElementById(
 burger.addEventListener('click',()=>navLinks.classList.toggle('open'));
 navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>navLinks.classList.remove('open')));
 document.getElementById('fabBtn').addEventListener('click',()=>{
-  document.getElementById('contact').scrollIntoView({behavior:'smooth'});
+  if(window.innerWidth<=900&&window.bldToForm){window.bldToForm(true);}
+  else document.getElementById('contact').scrollIntoView({behavior:'smooth'});
   setTimeout(()=>{const f=document.getElementById('fName');if(f)f.focus({preventScroll:true});},900);
 });
 
@@ -1466,7 +1467,10 @@ function showOk(){const go=()=>okBox.scrollIntoView({behavior:'instant',block:'c
 /* Mobile: "Inquire" links jump straight to the form, not the contact heading */
 (function(){
  const mob=()=>window.innerWidth<=900;
- const toForm=(smooth)=>{const f=document.getElementById('inquiryForm');if(!f||f.style.display==='none')return;const y=f.getBoundingClientRect().top+window.scrollY-76;window.scrollTo({top:y,behavior:smooth?'smooth':'instant'});};
+ const once=(smooth)=>{const f=document.getElementById('inquiryForm');if(!f||f.style.display==='none')return;const y=f.getBoundingClientRect().top+window.scrollY-76;window.scrollTo({top:y,behavior:smooth?'smooth':'instant'});};
+ /* Lazy images above can push the form down mid-scroll, so re-align afterwards */
+ const toForm=(smooth)=>{once(smooth);setTimeout(()=>once(false),smooth?900:400);setTimeout(()=>once(false),1600);};
+ window.bldToForm=toForm;
  document.addEventListener('click',e=>{const a=e.target.closest('a[href="#contact"]');if(!a||!mob())return;e.preventDefault();try{history.replaceState(null,'','#contact');}catch(_){}setTimeout(()=>toForm(true),80);});
  if(location.hash==='#contact'&&mob()&&!/[?&]sent=1/.test(location.search)){setTimeout(()=>toForm(false),350);setTimeout(()=>toForm(false),1300);}
 })();
