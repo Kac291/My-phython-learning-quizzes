@@ -800,7 +800,7 @@ document.addEventListener('click',function(e){
   </div>
   <div style="display:flex;align-items:center;gap:22px">
     <button class="theme-btn" id="themeBtn" type="button" title="昼夜模式 Day/Night">☀</button>
-    <div class="lang-seg" id="langSeg" title="Language"><button type="button" data-l="zh" class="on">简</button><button type="button" data-href="/tw/" data-save="tw">繁</button><button type="button" data-l="en">EN</button></div>
+    <div class="lang-seg" id="langSeg" title="Language"><button type="button" data-l="zh" class="on">简</button><button type="button" data-l="tw">繁</button><button type="button" data-l="en">EN</button></div>
     <button class="burger" id="burger" aria-label="menu"><span></span><span></span></button>
   </div>
 </nav>
@@ -1422,13 +1422,40 @@ function setLang(l){
     ?'半导体陶瓷零部件 · OEM 件号对照(AMAT/NAURA/LAM/SPTS)| 上海百兰朵电子科技'
     :'Semiconductor Ceramic Parts · OEM Cross-Reference (AMAT/NAURA/LAM/SPTS) | Shanghai Bilateral Electronics';
 }
+/* ---- 繁体：在当前页面直接把简体转成繁体（台湾用语），不重新加载、不回到开头 ---- */
+const TW_PAIRS='导導体體号號对對兰蘭电電设設备備换換华華创創厂廠与與盖蓋铝鋁硅矽锆鋯极極离離蚀蝕积積随隨们們吗嗎么麼关關独獨产產级級为為标標仅僅于於识識别別无無隶隸属屬权權书書证證图圖纸紙来來样樣开開发發达達烧燒结結适適务務询詢价價订訂网網盘盤团團队隊时時内內规規视視复複杂雜数數确確码碼转轉签簽后後进進带帶单單脚腳会會触觸浏瀏览覽这這里裡动動补補键鍵点點击擊统統计計邮郵话話户戶见見问問题題昼晝国國学學盐鹽宁寧联聯专專将將业業检檢测測湾灣硕碩资資术術员員构構喷噴涂塗从從终終质質闭閉环環稳穩实實项項种種温溫选選热熱刚剛载載类類绝絕缘緣静靜强強韧韌应應优優脱脫胀脹扩擴艺藝协協乡鄉洁潔净淨条條链鏈炉爐机機余餘担擔尘塵车車间間满滿圆圓仪儀语語抛拋径徑现現头頭阵陣报報胶膠显顯划劃输輸称稱个個词詞没沒给給师師并並线線验驗过過纯純亚亞长長装裝试試蓝藍宝寶论論准準还還诉訴总總东東栋棟请請择擇传傳较較压壓缩縮销銷负負责責严嚴紧緊张張顶頂写寫简簡门門访訪记記';
+const TW_PHRASES=[['刻蝕','蝕刻'],['等離子','電漿'],['離子注入','離子佈植'],['詢盤','詢價'],['信息','資訊'],['質量','品質'],['郵箱','電子信箱'],['關系','關係'],['聯系','聯繫'],['回複','回覆'],['芯片','晶片'],['支持','支援'],['在線','線上'],['項目','專案'],['制造','製造'],['定制','訂製'],['制作','製作'],['研制','研製'],['起訂量','最小訂購量'],['件號','料號'],['零部件','零組件'],['制程','製程'],['制品','製品'],['用戶','客戶'],['依托','依託'],['文件','檔案'],['兼容','相容'],['光掩模','光罩'],['器件','元件'],['每一只','每一個'],['實用新型','新型'],['三坐標測量機','三次元量測儀'],['三坐標精密測量','三次元精密量測'],['三坐標','三次元'],['外延','磊晶'],['靜電卡盤','靜電夾盤'],['行業','產業'],['發郵件至','來信至']];
+let TWM=null,twOn=false,twObs=null;const twText=new Map(),twAttr=[];let twTitle=null;
+const HAN=/[一-鿿]/;
+function twConv(s){if(!TWM){TWM={};for(let i=0;i<TW_PAIRS.length;i+=2)TWM[TW_PAIRS[i]]=TW_PAIRS[i+1];}
+  s=s.replace(/[一-鿿]/g,c=>TWM[c]||c);for(const p of TW_PHRASES)s=s.split(p[0]).join(p[1]);return s;}
+const twSkip=n=>{const p=n.parentNode;return !p||/^(SCRIPT|STYLE|NOSCRIPT|TEXTAREA)$/.test(p.nodeName);};
+function twNode(n){if(twSkip(n)||!HAN.test(n.data))return;const c=twConv(n.data);if(c!==n.data){if(!twText.has(n))twText.set(n,n.data);n.data=c;}}
+function twTree(root){const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode())twNode(n);
+  (root.querySelectorAll?root:document).querySelectorAll('[placeholder],[title],[aria-label],[alt],[data-cap]').forEach(el=>{['placeholder','title','aria-label','alt','data-cap'].forEach(a=>{const v=el.getAttribute(a);if(v&&HAN.test(v)){const c=twConv(v);if(c!==v){twAttr.push([el,a,v]);el.setAttribute(a,c);}}});});}
+function twApply(on){
+  if(on===twOn)return;
+  if(on){
+    twTitle=document.title;document.title=twConv(document.title);document.documentElement.lang='zh-TW';
+    twTree(document.body);
+    twObs=new MutationObserver(ms=>{twObs.disconnect();for(const m of ms){
+        if(m.type==='characterData'){const n=m.target;if(HAN.test(n.data)&&twConv(n.data)!==n.data){twText.set(n,n.data);n.data=twConv(n.data);}else if(!HAN.test(n.data))twText.delete(n);}
+        else m.addedNodes.forEach(a=>{if(a.nodeType===3)twNode(a);else if(a.nodeType===1)twTree(a);});}
+      twObs.observe(document.body,{subtree:true,childList:true,characterData:true});});
+    twObs.observe(document.body,{subtree:true,childList:true,characterData:true});
+  }else{
+    if(twObs)twObs.disconnect();twObs=null;
+    twText.forEach((v,n)=>{if(n.isConnected)n.data=v;});twText.clear();
+    twAttr.forEach(([el,a,v])=>el.setAttribute(a,v));twAttr.length=0;
+    if(twTitle!=null)document.title=twTitle;document.documentElement.lang=lang==='zh'?'zh-CN':'en';
+  }
+  twOn=on;langSeg.querySelectorAll('button').forEach(b=>b.classList.toggle('on',on?b.dataset.l==='tw':b.dataset.l===lang));
+}
 langSeg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
-  if(b.dataset.href){try{localStorage.setItem('bld-lang',b.dataset.save||'zh');}catch(e){}
-    /* 记住当前看到的区块和区块内位置，切换到简/繁页面后回到同一位置 */
-    try{let best=null;document.querySelectorAll('section[id]').forEach(s=>{const r=s.getBoundingClientRect();if(r.top<=window.innerHeight*0.3&&r.bottom>0)best=s;});
-      if(best)sessionStorage.setItem('bld-pos',JSON.stringify({id:best.id,off:Math.round(-best.getBoundingClientRect().top),t:Date.now()}));}catch(e){}
-    location.href=b.dataset.href; return;}
-  if(b.dataset.l!==lang){setLang(b.dataset.l);try{localStorage.setItem('bld-lang',b.dataset.l);}catch(e){}}
+  const l=b.dataset.l;if(!l)return;
+  if(l==='tw'){if(!twOn){if(lang!=='zh')setLang('zh');twApply(true);}}
+  else{if(twOn)twApply(false);setLang(l);}
+  try{localStorage.setItem('bld-lang',l);}catch(e){}
 }));
 /* 语言识别：繁体浏览器(台湾/香港/澳门)首次访问自动跳到 /tw/；记住访客手动选择 */
 (function(){
@@ -1436,8 +1463,9 @@ langSeg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
   const nl=((navigator.language||navigator.userLanguage||'zh')+'').toLowerCase();
   const isBot=/bot|crawl|spider|slurp|lighthouse/i.test(navigator.userAgent||'');
   const trad=/^zh-(tw|hk|mo|hant)/.test(nl);
-  if(window.BLD_PAGE==='tw'){return;}
-  if(!isBot&&(saved==='tw'||(!saved&&trad))&&!/[?&]sent=1/.test(location.search)){location.replace('/tw/'+location.hash);return;}
+  /* /tw/ 页面，或访客选过繁体 / 浏览器是繁体：直接在本页转成繁体，不再跳转 */
+  if(window.BLD_PAGE==='tw'){twApply(true);return;}
+  if(!isBot&&(saved==='tw'||(!saved&&trad))){twApply(true);return;}
   const guess=nl.indexOf('zh')===0?'zh':'en';
   const init=(saved==='tw'?'zh':saved)||guess;
   if(init!=='zh')setLang(init);

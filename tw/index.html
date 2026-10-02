@@ -49,15 +49,13 @@
     return s;
   }
   function show(html){
-    html=conv(html);
+    /* 頁面本身會在載入時把內容轉成繁體（BLD_PAGE="tw"），這裡只改網址相關設定 */
     html=html.split('zh-CN').join('zh-TW');
     html=html.replace('<head>','<head><script>window.BLD_PAGE="tw";<\/script>');
     html=html.replace('<link rel="canonical" href="https://bilateral.top/">','<link rel="canonical" href="https://bilateral.top/tw/">');
     html=html.split('property="og:url" content="https://bilateral.top/"').join('property="og:url" content="https://bilateral.top/tw/"');
     html=html.split('og:locale" content="zh_CN"').join('og:locale" content="zh_TW"');
     html=html.split('https://bilateral.top/?sent=1#contact').join('https://bilateral.top/tw/?sent=1#contact');
-    html=html.replace('<button type="button" data-l="zh" class="on">簡</button><button type="button" data-href="/tw/" data-save="tw">繁</button><button type="button" data-l="en">EN</button>',
-      '<button type="button" data-href="/" data-save="zh">簡</button><button type="button" data-l="zh" class="on">繁</button><button type="button" data-href="/en/" data-save="en">EN</button>');
     var hash=location.hash;
     document.open();document.write(html);document.close();
     /* 站內連結（#contact 等）在內容寫入後再捲動到對應區塊 */
