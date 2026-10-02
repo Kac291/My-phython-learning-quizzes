@@ -1451,7 +1451,7 @@ form.addEventListener('submit',async e=>{
   const res=await fetch('https://formsubmit.co/ajax/3e1df4376c519106335da6f5a4b9415a',{method:'POST',headers:{'Accept':'application/json'},body:new FormData(form)});
   if(!res.ok)throw new Error('status '+res.status);
   bldConv();
-  form.style.display='none';okBox.classList.add('show');
+  form.style.display='none';okBox.classList.add('show');showOk();
  }catch(err){
   bldConv();
   form.submit();
@@ -1460,8 +1460,9 @@ form.addEventListener('submit',async e=>{
 (function(){const ff=document.getElementById('fFile');if(ff)ff.addEventListener('change',()=>fClear(ff));
  if(/[?&]sent=1/.test(location.search)){form.style.display='none';okBox.classList.add('show');
   try{history.replaceState(null,'',location.pathname+'#contact');}catch(e){}
-  setTimeout(()=>{const c=document.getElementById('contact');if(c)c.scrollIntoView();},400);}
+  showOk();}
 })();
+function showOk(){const go=()=>okBox.scrollIntoView({behavior:'instant',block:'center'});go();setTimeout(go,400);setTimeout(go,1200);}
 </script>
 <script>
 /* ============ OEM cross-reference: live search + filter ============ */
