@@ -8,7 +8,7 @@
 <meta name="description" content="上海百兰朵电子科技（成立2009年）—— 半导体设备陶瓷零部件 OEM 同等替换件制造商。提供 AMAT、NAURA 北方华创、LAM、SPTS 等主流设备的原厂件号对照与同等替换件，覆盖氧化铝、氮化铝、碳化硅、石英等材料体系，每批附 COC。OEM-equivalent semiconductor ceramic replacement parts (alumina / AlN / SiC / quartz) cross-referenced to AMAT, NAURA, LAM &amp; SPTS part numbers.">
 <meta name="keywords" content="半导体陶瓷零部件, 半导体设备零部件, OEM替换件, 原厂件号对照, 同等替换件, 陶瓷零部件厂家, AMAT, Applied Materials, NAURA, 北方华创, LAM, LAM Research, SPTS, 氧化铝陶瓷, Alumina, Al2O3, 氮化铝, AlN, 碳化硅, SiC, Silicon Carbide, 石英, Quartz, 氧化锆, Zirconia, 氮化硅, Si3N4, 石墨, Graphite, 硅电极, Silicon, Focus Ring, Cover Ring, Edge Ring, Ceramic Dome, Showerhead, Gas Nozzle, Electrode, Deposition Ring, Preheat Ring, Insulator Ring, Clamp Ring, Cover Plate, Robot Blade, Chuck Pin, 等离子刻蚀, 薄膜沉积, 离子注入, CVD, PVD, HDP-CVD, PECVD, 0200-01009, 0200-01006, 0021-64644, 10140-000409E, 10150-001710A, 15-282056-00, 716-162898-005, 707095">
 <meta name="robots" content="index, follow, max-image-preview:large">
-<link rel="canonical" href="https://bilateral.top/"><link rel="alternate" hreflang="zh-Hans" href="https://bilateral.top/"><link rel="alternate" hreflang="en" href="https://bilateral.top/en/"><link rel="alternate" hreflang="x-default" href="https://bilateral.top/">
+<link rel="canonical" href="https://bilateral.top/"><link rel="alternate" hreflang="zh-Hans" href="https://bilateral.top/"><link rel="alternate" hreflang="zh-Hant" href="https://bilateral.top/tw/"><link rel="alternate" hreflang="en" href="https://bilateral.top/en/"><link rel="alternate" hreflang="x-default" href="https://bilateral.top/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="上海百兰朵电子科技 / Bilateral Electronics">
 <meta property="og:title" content="上海百兰朵电子科技 — 半导体陶瓷零部件 OEM 件号对照 | AMAT · NAURA · LAM · SPTS">
@@ -800,7 +800,7 @@ document.addEventListener('click',function(e){
   </div>
   <div style="display:flex;align-items:center;gap:22px">
     <button class="theme-btn" id="themeBtn" type="button" title="昼夜模式 Day/Night">☀</button>
-    <div class="lang-seg" id="langSeg" title="Language"><button type="button" data-l="zh" class="on">中</button><button type="button" data-l="en">EN</button></div>
+    <div class="lang-seg" id="langSeg" title="Language"><button type="button" data-l="zh" class="on">简</button><button type="button" data-href="/tw/" data-save="tw">繁</button><button type="button" data-l="en">EN</button></div>
     <button class="burger" id="burger" aria-label="menu"><span></span><span></span></button>
   </div>
 </nav>
@@ -1422,13 +1422,19 @@ function setLang(l){
     :'Semiconductor Ceramic Parts · OEM Cross-Reference (AMAT/NAURA/LAM/SPTS) | Shanghai Bilateral Electronics';
 }
 langSeg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+  if(b.dataset.href){try{localStorage.setItem('bld-lang',b.dataset.save||'zh');}catch(e){} location.href=b.dataset.href; return;}
   if(b.dataset.l!==lang){setLang(b.dataset.l);try{localStorage.setItem('bld-lang',b.dataset.l);}catch(e){}}
 }));
-/* auto-detect visitor language on first visit */
+/* 语言识别：繁体浏览器(台湾/香港/澳门)首次访问自动跳到 /tw/；记住访客手动选择 */
 (function(){
   let saved=null;try{saved=localStorage.getItem('bld-lang');}catch(e){}
-  const guess=((navigator.language||navigator.userLanguage||'zh')+'').toLowerCase().indexOf('zh')===0?'zh':'en';
-  const init=saved||guess;
+  const nl=((navigator.language||navigator.userLanguage||'zh')+'').toLowerCase();
+  const isBot=/bot|crawl|spider|slurp|lighthouse/i.test(navigator.userAgent||'');
+  const trad=/^zh-(tw|hk|mo|hant)/.test(nl);
+  if(window.BLD_PAGE==='tw'){return;}
+  if(!isBot&&(saved==='tw'||(!saved&&trad))&&!/[?&]sent=1/.test(location.search)){location.replace('/tw/'+location.hash);return;}
+  const guess=nl.indexOf('zh')===0?'zh':'en';
+  const init=(saved==='tw'?'zh':saved)||guess;
   if(init!=='zh')setLang(init);
 })();
 
