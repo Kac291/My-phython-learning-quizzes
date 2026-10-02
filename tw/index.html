@@ -60,7 +60,9 @@
     document.open();document.write(html);document.close();
     /* 站內連結（#contact 等）在內容寫入後再捲動到對應區塊 */
     if(hash&&hash.length>1){
-      var go=function(){var el=document.getElementById(hash.slice(1));if(el)el.scrollIntoView({behavior:'instant',block:'start'});};
+      var tid=hash.slice(1);
+      if(tid==='contact'&&window.innerWidth<=900)return; /* 手機端由頁面自身定位到表單 */
+      var go=function(){var el=document.getElementById(tid);if(el)el.scrollIntoView({behavior:'instant',block:'start'});};
       setTimeout(go,300);setTimeout(go,1200);
     }
   }
