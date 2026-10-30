@@ -549,6 +549,14 @@ h2.display .red{color:var(--red-bright)}
 .form-ok h3 .red{color:var(--red-bright)}
 .form-ok p{color:var(--ink-50);margin-top:18px;font-size:14.5px;max-width:480px}
 .form-ok .mono{display:block;margin-top:26px;font-size:10px;letter-spacing:.25em;color:var(--ink-30);text-transform:uppercase}
+#fRefLine:has(b:empty){display:none}
+.form-ok .f-lost{display:none;margin-top:14px;color:var(--red-bright);font-size:13.5px}
+.form-fail{display:none;margin-top:22px;padding:20px 22px;border:1px solid var(--red-bright);border-radius:4px}
+.form-fail.show{display:block}
+.form-fail h4{font-family:var(--serif);font-weight:900;font-size:19px;letter-spacing:.04em}
+.form-fail p{color:var(--ink-50);margin-top:10px;font-size:14px;line-height:1.7}
+.form-fail .ff-act{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center;margin-top:16px}
+.form-fail .ff-act a.mono{font-size:15px}
 
 /* ============ footer ============ */
 footer{border-top:1px solid var(--line);padding:clamp(50px,8vh,90px) var(--pad) 40px;position:relative;z-index:3}
@@ -760,11 +768,10 @@ gtag('config','G-3X69MHYF3K');
 gtag('config','AW-18467829651');
 /* Google Ads 转化标签：建好"官网询盘提交"转化后，把 label 填进来 */
 window.BLD_ADS={id:'AW-18467829651',label:'o46oCI_Cw40dEJPvkuZE'};
-window.bldConv=function(programmatic){
+window.bldConv=function(channel){
   try{
-    gtag('event','generate_lead',{form:'inquiry',page_lang:document.documentElement.lang});
-    /* 带附件时表单由脚本提交，不会触发浏览器 submit 事件，这里手动补发 form_submit，供 Google Ads"表單"转化识别 */
-    if(programmatic){gtag('event','form_submit',{form_id:'inquiryForm',form_destination:'formsubmit.co'});}
+    gtag('event','generate_lead',{form:'inquiry',page_lang:document.documentElement.lang,inquiry_channel:channel||''});
+    /* 只有询盘确认送达（官网后台、Google 表格或 FormSubmit 返回成功）才调用这里，Google Ads 转化 = 真实收到的询盘 */
     if(BLD_ADS.label){gtag('event','conversion',{send_to:BLD_ADS.id+'/'+BLD_ADS.label,transport_type:'beacon'});}
   }catch(e){}
 };
@@ -1156,6 +1163,7 @@ document.addEventListener('click',function(e){
             <input type="hidden" name="_template" value="table">
             <input type="hidden" name="_captcha" value="false">
             <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+<input type="hidden" name="来源 Source" id="fSrc" value=""><input type="hidden" name="页面 Page" id="fPage" value="">
             <div class="f-two">
               <div class="f-field"><label data-zh="姓名 ·必填" data-en="Name ·Required">姓名 <em>·必填</em></label><input type="text" name="姓名 Name" id="fName" data-ph-zh="您的姓名" data-ph-en="Your name" placeholder="您的姓名" required></div>
               <div class="f-field"><label data-zh="公司" data-en="Company">公司</label><input type="text" name="公司 Company" data-ph-zh="公司名称" data-ph-en="Company name" placeholder="公司名稱"></div>
@@ -1186,10 +1194,21 @@ document.addEventListener('click',function(e){
               <p class="f-note" data-zh="询盘将同时送达销售与负责人邮箱 · 严格保密" data-en="Delivered to both sales &amp; management · strictly confidential">詢價將同時送達銷售與負責人電子信箱 · 嚴格保密</p>
             </div>
           </form>
+          <div class="form-fail" id="formFail" role="alert">
+            <h4 data-zh="网络问题，询盘没有发出" data-en="Your inquiry could not be sent">網絡問題，詢價沒有發出</h4>
+            <p data-zh="很抱歉，表单暂时无法提交。您填写的内容还在，请点击下方按钮用邮箱直接发送（内容会自动带入），或稍后再试一次。" data-en="Sorry — our form could not be submitted due to a network issue. Your details are still here: click the button below to send them by email (pre-filled), or try again in a moment.">很抱歉，表單暫時無法提交。您填寫的內容還在，請點擊下方按鈕用電子信箱直接發送（內容會自動帶入），或稍後再試一次。</p>
+            <div class="ff-act">
+              <a class="cta" id="failMail" href="mailto:sales@bilateral.top"><span data-zh="用邮箱发送" data-en="Send by email">用電子信箱發送</span><span class="ar">→</span></a>
+              <a class="mono" href="mailto:sales@bilateral.top">sales@bilateral.top</a>
+              <a class="mono" href="tel:+8615316555536">+86 153 1655 5536</a>
+            </div>
+          </div>
           <div class="form-ok" id="formOk">
             <h3><span data-zh="已收到" data-en="Received">已收到</span><span class="red">。</span></h3>
             <p data-zh="我们的工程团队将在 24 小时内与您联系。如有紧急需求，请直接致电 +86 153 1655 5536。" data-en="Our engineering team will contact you within 24 hours. For urgent matters, call +86 153 1655 5536.">我們的工程團隊將在 24 小時內與您聯繫。如有緊急需求，請直接致電 +86 153 1655 5536。</p>
             <span class="mono">INQUIRY LOGGED — REPLY WITHIN 24H</span>
+<span class="mono" id="fRefLine">REF <b id="fRefId"></b></span>
+<p class="f-lost" id="fLost" data-zh="附件未能随表单上传，请把图纸直接发到 sales@bilateral.top，我们收到后立即报价。" data-en="Your attachment could not be uploaded with the form — please email the drawing to sales@bilateral.top and we will quote right away.">附件未能隨表單上傳，請把圖紙直接發到 sales@bilateral.top，我們收到後立即報價。</p>
           </div>
         </div>
       </div>
@@ -1429,7 +1448,7 @@ function setLang(l){
     :'Semiconductor Ceramic Parts · OEM Cross-Reference (AMAT/NAURA/LAM/SPTS) | Shanghai Bilateral Electronics';
 }
 /* ---- 繁体：在当前页面直接把简体转成繁体（台湾用语），不重新加载、不回到开头 ---- */
-const TW_PAIRS='导導体體号號对對兰蘭电電设設备備换換华華创創厂廠与與盖蓋铝鋁硅矽锆鋯极極离離蚀蝕积積随隨们們吗嗎么麼关關独獨产產级級为為标標仅僅于於识識别別无無隶隸属屬权權书書证證图圖纸紙来來样樣开開发發达達烧燒结結适適务務询詢价價订訂网網盘盤团團队隊时時内內规規视視复複杂雜数數确確码碼转轉签簽后後进進带帶单單脚腳会會触觸浏瀏览覽这這里裡动動补補键鍵点點击擊统統计計邮郵话話户戶见見问問题題昼晝国國学學盐鹽宁寧联聯专專将將业業检檢测測湾灣硕碩资資术術员員构構喷噴涂塗从從终終质質闭閉环環稳穩实實项項种種温溫选選热熱刚剛载載类類绝絕缘緣静靜强強韧韌应應优優脱脫胀脹扩擴艺藝协協乡鄉洁潔净淨条條链鏈炉爐机機余餘担擔尘塵车車间間满滿圆圓仪儀语語抛拋径徑现現头頭阵陣报報胶膠显顯划劃输輸称稱个個词詞没沒给給师師并並线線验驗过過纯純亚亞长長装裝试試蓝藍宝寶论論准準还還诉訴总總东東栋棟请請择擇传傳较較压壓缩縮销銷负負责責严嚴紧緊张張顶頂写寫简簡门門访訪记記';
+const TW_PAIRS='络絡暂暫钮鈕导導体體号號对對兰蘭电電设設备備换換华華创創厂廠与與盖蓋铝鋁硅矽锆鋯极極离離蚀蝕积積随隨们們吗嗎么麼关關独獨产產级級为為标標仅僅于於识識别別无無隶隸属屬权權书書证證图圖纸紙来來样樣开開发發达達烧燒结結适適务務询詢价價订訂网網盘盤团團队隊时時内內规規视視复複杂雜数數确確码碼转轉签簽后後进進带帶单單脚腳会會触觸浏瀏览覽这這里裡动動补補键鍵点點击擊统統计計邮郵话話户戶见見问問题題昼晝国國学學盐鹽宁寧联聯专專将將业業检檢测測湾灣硕碩资資术術员員构構喷噴涂塗从從终終质質闭閉环環稳穩实實项項种種温溫选選热熱刚剛载載类類绝絕缘緣静靜强強韧韌应應优優脱脫胀脹扩擴艺藝协協乡鄉洁潔净淨条條链鏈炉爐机機余餘担擔尘塵车車间間满滿圆圓仪儀语語抛拋径徑现現头頭阵陣报報胶膠显顯划劃输輸称稱个個词詞没沒给給师師并並线線验驗过過纯純亚亞长長装裝试試蓝藍宝寶论論准準还還诉訴总總东東栋棟请請择擇传傳较較压壓缩縮销銷负負责責严嚴紧緊张張顶頂写寫简簡门門访訪记記';
 const TW_PHRASES=[['刻蝕','蝕刻'],['等離子','電漿'],['離子注入','離子佈植'],['詢盤','詢價'],['信息','資訊'],['質量','品質'],['郵箱','電子信箱'],['關系','關係'],['聯系','聯繫'],['回複','回覆'],['芯片','晶片'],['支持','支援'],['在線','線上'],['項目','專案'],['制造','製造'],['定制','訂製'],['制作','製作'],['研制','研製'],['起訂量','最小訂購量'],['件號','料號'],['零部件','零組件'],['制程','製程'],['制品','製品'],['用戶','客戶'],['依托','依託'],['文件','檔案'],['兼容','相容'],['光掩模','光罩'],['器件','元件'],['每一只','每一個'],['實用新型','新型'],['三坐標測量機','三次元量測儀'],['三坐標精密測量','三次元精密量測'],['三坐標','三次元'],['外延','磊晶'],['靜電卡盤','靜電夾盤'],['行業','產業'],['發郵件至','來信至']];
 let TWM=null,twOn=false,twObs=null;const twText=new Map(),twAttr=[];let twTitle=null;
 const HAN=/[一-鿿]/;
@@ -1504,27 +1523,148 @@ const fRules=[
 function fErr(el,msg){el.classList.add('err');let m=el.parentNode.querySelector('.f-err');if(!m){m=document.createElement('div');m.className='f-err';el.parentNode.appendChild(m);}m.textContent=msg;m.style.display='block';}
 function fClear(el){el.classList.remove('err');const m=el.parentNode.querySelector('.f-err');if(m)m.style.display='none';}
 fRules.forEach(([id])=>{const el=document.getElementById(id);if(el){el.addEventListener('input',()=>fClear(el));el.addEventListener('blur',()=>{if(el.value.trim())fClear(el);});}});
+/* 询盘发送（任何一步成功才算送达，才记 Google Ads 转化）：
+   ① 官网自己的接收程序 /api/inquiry：存进官网询盘后台 + 用 sales@ 发邮件到 sales@ 和 163，
+      同时抄一份到 Google 表格做第二份记录（只记录不重复发信）；
+   ② ①不通 → Google 表格 + 邮件；③ 再不通 → FormSubmit；
+   ④ 全都不通 → 存进访客浏览器的待发箱并提示用邮箱发送，访客下次打开本站时自动补发。
+   每条询盘有唯一编号，重试/补发不会重复记录。 */
+const BLD_FORM={api:'/api/inquiry',gas:'https://script.google.com/macros/s/AKfycbyttsPuLx98VGRuzi0D1oENbb9bsX66J9q0MXy8WWWkVNDHeS3k5FkFFoHUBJQ5u9to/exec',fs:'https://formsubmit.co/ajax/3e1df4376c519106335da6f5a4b9415a',apiMax:4*1024*1024};
+let bldFileLost=false;
+function bldTimeout(ms){const c=new AbortController();setTimeout(()=>c.abort(),ms);return c.signal;}
+function bldFields(){const o={};for(const el of form.elements){if(!el.name||el.name[0]==='_'||el.type==='file')continue;o[el.name]=el.value;}return o;}
+function bldNewId(){const d=new Date(),p=n=>String(n).padStart(2,'0');return 'BLD-'+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'-'+Math.random().toString(36).slice(2,6).toUpperCase();}
+function bldFile64(f){return new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(',')[1]||'');r.onerror=()=>no(r.error);r.readAsDataURL(f);});}
+async function bldSendAPI(fields,file,note){
+  const fd=new FormData();
+  for(const k in fields)fd.append(k,fields[k]);
+  fd.append('_honey',(form.elements['_honey']||{}).value||'');
+  if(file)fd.append('attachment',file,file.name);
+  if(note)fd.append('附件 Attachment',note);
+  const r=await fetch(BLD_FORM.api,{method:'POST',body:fd,signal:bldTimeout(file?60000:20000)});
+  const j=await r.json();
+  if(!j||j.success!==true)throw new Error('api '+r.status);
+  return j;
+}
+async function bldSendGAS(fields,file,mail){
+  if(!BLD_FORM.gas)throw new Error('gas not set');
+  const p={fields,mail:mail!==false,_honey:(form.elements['_honey']||{}).value||''};
+  if(file)p.file={name:file.name,type:file.type,data:await bldFile64(file)};
+  const r=await fetch(BLD_FORM.gas,{method:'POST',body:JSON.stringify(p),keepalive:!file,signal:bldTimeout(file?60000:20000)});
+  const j=await r.json();
+  if(!j||j.success!==true)throw new Error('gas '+(j&&j.error));
+  return j;
+}
+async function bldSendFS(fields,note){
+  const fd=new FormData();
+  for(const el of form.elements){if(el.name&&el.name[0]==='_'&&el.name!=='_next'&&el.type!=='file')fd.append(el.name,el.value);}
+  for(const k in fields)fd.append(k,fields[k]);
+  if(note)fd.append('附件 Attachment',note);
+  const r=await fetch(BLD_FORM.fs,{method:'POST',headers:{'Accept':'application/json'},body:fd,signal:bldTimeout(20000)});
+  const j=await r.json().catch(()=>null);
+  if(!r.ok||!j||String(j.success)!=='true')throw new Error('fs '+r.status);
+}
+/* 依次尝试各通道，返回送达的通道名；都失败返回空字符串。附件没送到时 bldFileLost=true */
+async function bldDeliver(fields,file){
+  bldFileLost=false;
+  const big=!!file&&file.size>BLD_FORM.apiMax;
+  let a=null;
+  try{a=await bldSendAPI(fields,big?null:file,big?'附件 '+file.name+' 较大（'+(file.size/1048576).toFixed(1)+' MB），已转存 Google Drive「官网询盘附件」':'');}catch(err){}
+  if(a){
+    const needMail=!a.mailed,needFile=!!file&&(big||!a.fileSaved);
+    const g=bldSendGAS(fields,needFile?file:null,needMail);
+    if(needMail||needFile){
+      let ok=false;try{await g;ok=true;}catch(err){}
+      if(!ok&&needMail){try{await bldSendFS(fields,file?'客户上传了附件 '+file.name+'，请在官网询盘后台查看或向客户索取':'');}catch(err){}}
+      if(!ok&&needFile)bldFileLost=true;
+    }else g.catch(()=>{});
+    return 'site';
+  }
+  try{
+    const j=await bldSendGAS(fields,file,true);
+    if(j.mailed===false){try{await bldSendFS(fields,file?'客户上传了附件 '+file.name+'，见 Google Drive「官网询盘附件」':'');}catch(err){}}
+    return 'sheet';
+  }catch(err){}
+  try{await bldSendFS(fields,file?'客户上传了附件 '+file.name+'，但未能送达，请向客户索取图纸':'');bldFileLost=!!file;return 'formsubmit';}catch(err){}
+  return '';
+}
+/* 待发箱：两条通道都失败的询盘先存在访客浏览器里 */
+const BLD_OUTBOX='bld_outbox';
+function bldOutbox(){try{return JSON.parse(localStorage.getItem(BLD_OUTBOX)||'[]')||[];}catch(e){return [];}}
+function bldOutboxSave(list){try{list.length?localStorage.setItem(BLD_OUTBOX,JSON.stringify(list.slice(-10))):localStorage.removeItem(BLD_OUTBOX);}catch(e){}}
+async function bldFlushOutbox(){
+  const list=bldOutbox();if(!list.length)return;
+  const left=[];
+  for(const it of list){
+    if(Date.now()-it.t>30*864e5)continue;            /* 超过 30 天的不再重发 */
+    const f=Object.assign({},it.fields);
+    f['备注 Note']='访客当时提交失败，本条为 '+new Date(it.t).toISOString().slice(0,16).replace('T',' ')+' UTC 的询盘，再次打开网站时自动补发';
+    const ch=await bldDeliver(f,null);
+    if(ch)bldConv('retry-'+ch);else left.push(it);
+  }
+  bldOutboxSave(left);
+}
+function bldMailto(fields){
+  const sub='【官网询盘】Inquiry '+(fields['询盘编号 ID']||'')+' - '+(fields['姓名 Name']||'')+(fields['公司 Company']?' / '+fields['公司 Company']:'');
+  let body=Object.keys(fields).filter(k=>fields[k]&&k!=='页面 Page').map(k=>k+': '+fields[k]).join('\n');
+  if(body.length>1500)body=body.slice(0,1500)+'…';
+  return 'mailto:sales@bilateral.top?subject='+encodeURIComponent(sub)+'&body='+encodeURIComponent(body);
+}
+const failBox=document.getElementById('formFail');
+let bldPendingId='';
 form.addEventListener('submit',async e=>{
  e.preventDefault();
+ if(btn.disabled)return;
  let firstBad=null;
  fRules.forEach(([id,fn,msg])=>{const el=document.getElementById(id);if(fn(el.value))fClear(el);else{fErr(el,lang==='zh'?msg.zh:msg.en);if(!firstBad)firstBad=el;}});
  if(firstBad){firstBad.focus();firstBad.scrollIntoView({behavior:'smooth',block:'center'});return;}
  const fFile=document.getElementById('fFile');
- const hasFile=fFile&&fFile.files&&fFile.files.length>0;
- if(hasFile&&fFile.files[0].size>10*1024*1024){fErr(fFile,lang==='zh'?'文件超过 10MB，请压缩后再传，或直接发邮件至 sales@bilateral.top':'File exceeds 10 MB — please zip it or email sales@bilateral.top');fFile.scrollIntoView({behavior:'smooth',block:'center'});return;}
- btn.disabled=true;
- btn.querySelector('span').textContent=lang==='zh'?'发送中…':'Sending…';
- if(hasFile){bldConv(true);setTimeout(()=>form.submit(),900);return;}
- try{
-  const res=await fetch('https://formsubmit.co/ajax/3e1df4376c519106335da6f5a4b9415a',{method:'POST',headers:{'Accept':'application/json'},body:new FormData(form)});
-  if(!res.ok)throw new Error('status '+res.status);
-  bldConv();
+ const file=fFile&&fFile.files&&fFile.files.length>0?fFile.files[0]:null;
+ if(file&&file.size>10*1024*1024){fErr(fFile,lang==='zh'?'文件超过 10MB，请压缩后再传，或直接发邮件至 sales@bilateral.top':'File exceeds 10 MB — please zip it or email sales@bilateral.top');fFile.scrollIntoView({behavior:'smooth',block:'center'});return;}
+ const btnTx=btn.querySelector('span'),btnOld=btnTx.textContent;
+ btn.disabled=true;failBox.classList.remove('show');
+ btnTx.textContent=lang==='zh'?'发送中…':'Sending…';
+ const fields=bldFields();
+ /* 同一份内容重试时沿用同一个编号，表格里不会重复 */
+ if(!bldPendingId)bldPendingId=bldNewId();
+ fields['询盘编号 ID']=bldPendingId;
+ const channel=await bldDeliver(fields,file);
+ const box=bldOutbox().filter(it=>it.fields['询盘编号 ID']!==bldPendingId);
+ if(channel){
+  bldOutboxSave(box);
+  bldConv(channel);
+  const lost=document.getElementById('fLost');if(lost)lost.style.display=bldFileLost?'block':'none';
+  const rid=document.getElementById('fRefId');if(rid)rid.textContent=bldPendingId;
+  bldPendingId='';
   form.style.display='none';okBox.classList.add('show');showOk();
- }catch(err){
-  bldConv();
-  form.submit();
+ }else{
+  box.push({t:Date.now(),fields});bldOutboxSave(box);
+  try{gtag('event','inquiry_failed',{page_lang:document.documentElement.lang});}catch(err){}
+  document.getElementById('failMail').href=bldMailto(fields);
+  failBox.classList.add('show');failBox.scrollIntoView({behavior:'smooth',block:'center'});
+  btn.disabled=false;btnTx.textContent=btnOld;
  }
 });
+/* 打开页面 3 秒后，静默补发待发箱里的询盘 */
+setTimeout(()=>{bldFlushOutbox().catch(()=>{});},3000);
+/* 询盘来源：记录广告点击 ID / utm / 来路，随询盘一起发出 */
+(function(){
+  const keys=['gclid','gbraid','wbraid','utm_source','utm_medium','utm_campaign','utm_term'];
+  let src='';
+  try{
+    const q=new URLSearchParams(location.search);
+    const hit=keys.filter(k=>q.get(k)).map(k=>k+'='+q.get(k)).join('; ');
+    if(hit){src=hit;sessionStorage.setItem('bld_src',hit);}
+    else src=sessionStorage.getItem('bld_src')||'';
+    if(!src){
+      let ref='';try{ref=document.referrer?new URL(document.referrer).hostname:'';}catch(e){}
+      if(ref&&ref!==location.hostname){src='referrer='+ref;sessionStorage.setItem('bld_src',src);}
+    }
+  }catch(e){}
+  const s=document.getElementById('fSrc'),pg=document.getElementById('fPage');
+  if(s)s.value=src||'direct';
+  if(pg)pg.value=location.pathname;
+})();
 (function(){const ff=document.getElementById('fFile');if(ff)ff.addEventListener('change',()=>fClear(ff));
  if(/[?&]sent=1/.test(location.search)){form.style.display='none';okBox.classList.add('show');
   try{history.replaceState(null,'',location.pathname+'#contact');}catch(e){}
