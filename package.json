@@ -1,0 +1,11 @@
+{
+  "name": "bilateral-website",
+  "private": true,
+  "type": "module",
+  "description": "bilateral.top 官网：静态页面 + 询盘接收接口(api/) + 询盘后台(admin/)",
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "@vercel/blob": "2.8.1",
+    "nodemailer": "10.0.16"
+  }
+}

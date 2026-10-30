@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>询盘后台 · 百兰朵</title>
+<style>
+:root{
+  --bg:#f3efe6;--card:#fbf9f4;--line:#ddd6c8;--ink:#191613;--ink2:#5f5850;--ink3:#8f877c;
+  --red:#c8351f;--red-soft:#f6e3de;--ok:#2e7d4f;--ok-soft:#e1f0e6;--warn:#a15c00;--warn-soft:#f8ead2;
+  --serif:'Noto Serif SC','Songti SC','SimSun',serif;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+  --mono:'SF Mono',Consolas,'IBM Plex Mono',monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121110;--card:#1b1a18;--line:#34312c;--ink:#ece8e0;--ink2:#b3ab9f;--ink3:#7d766c;
+  --red:#e04a32;--red-soft:#3a1d17;--ok:#5fbf86;--ok-soft:#173022;--warn:#e0a24a;--warn-soft:#33260f;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 var(--sans)}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:24px 16px 80px}
+h1{font-family:var(--serif);font-weight:900;font-size:26px;letter-spacing:.08em;margin:0}
+h1 .dot{color:var(--red)}
+.top{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:18px}
+.btn{border:1px solid var(--line);background:var(--card);padding:7px 14px;border-radius:6px;cursor:pointer}
+.btn:hover{border-color:var(--ink3)}
+.btn.primary{background:var(--red);border-color:var(--red);color:#fff}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+.bar input,.bar select{border:1px solid var(--line);background:var(--card);padding:7px 10px;border-radius:6px}
+.bar input{flex:1;min-width:180px}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 14px;min-width:110px}
+.stat b{display:block;font-size:22px;font-family:var(--serif)}
+.stat span{color:var(--ink3);font-size:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:12px}
+.card.hl{outline:2px solid var(--red)}
+.card.new{border-left:4px solid var(--red)}
+.head{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:baseline;justify-content:space-between}
+.who{font-weight:600;font-size:16px}
+.who small{font-weight:400;color:var(--ink2);margin-left:6px}
+.meta{color:var(--ink3);font-size:12px;font-family:var(--mono)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:6px 18px;margin-top:10px}
+.kv{font-size:13px;overflow-wrap:anywhere}
+.kv i{font-style:normal;color:var(--ink3);margin-right:6px}
+.msg{white-space:pre-wrap;margin-top:10px;padding:10px 12px;background:var(--bg);border-radius:6px;overflow-wrap:anywhere}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+.pill{font-size:12px;padding:2px 9px;border-radius:99px;background:var(--bg);color:var(--ink2)}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.bad{background:var(--red-soft);color:var(--red)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.row select{border:1px solid var(--line);background:var(--card);padding:5px 8px;border-radius:6px}
+.note{flex:1;min-width:200px;border:1px solid var(--line);background:var(--card);padding:6px 9px;border-radius:6px;resize:vertical;min-height:34px}
+a{color:var(--red)}
+.login{max-width:360px;margin:12vh auto 0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:28px}
+.login input{width:100%;border:1px solid var(--line);background:var(--bg);padding:10px 12px;border-radius:6px;margin:16px 0 12px}
+.err{color:var(--red);font-size:13px;min-height:20px}
+.empty{color:var(--ink3);text-align:center;padding:60px 0}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="loginBox" class="login">
+    <h1>询盘后台<span class="dot">.</span></h1>
+    <form id="loginForm">
+      <input type="password" id="pw" placeholder="后台密码" autocomplete="current-password" required>
+      <div class="err" id="loginErr"></div>
+      <button class="btn primary" type="submit" style="width:100%">进入</button>
+    </form>
+  </div>
+
+  <div id="app" class="hidden">
+    <div class="top">
+      <h1>官网询盘<span class="dot">.</span></h1>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="refresh">刷新</button>
+        <button class="btn" id="exportCsv">导出 Excel (CSV)</button>
+        <button class="btn" id="logout">退出</button>
+      </div>
+    </div>
+    <div class="stats" id="stats"></div>
+    <div class="bar">
+      <input id="q" type="search" placeholder="搜索姓名、公司、邮箱、件号、需求…">
+      <select id="fStatus"><option value="">全部状态</option></select>
+    </div>
+    <div class="err" id="appErr"></div>
+    <div id="list"></div>
+  </div>
+</div>
+<script>
+const FIELDS=['姓名 Name','公司 Company','email','电话 Phone','意向 Interest','需求 Message','来源 Source','页面 Page'];
+let KEY='',DATA=[],STATUSES=['新询盘','已回复','报价中','已成交','无效/推销'];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function store(k,v){try{if(v===undefined)return sessionStorage.getItem(k);if(v===null)sessionStorage.removeItem(k);else sessionStorage.setItem(k,v);}catch(e){return null;}}
+async function api(path,opt={}){
+  const r=await fetch('/api/admin'+path,{...opt,headers:{...(opt.headers||{}),'x-admin-key':KEY}});
+  if(r.status===401){logout('密码不对，或已过期');throw new Error('unauthorized');}
+  return r;
+}
+function fmt(iso){const d=new Date(iso);if(isNaN(d))return iso||'';
+  const p=n=>String(n).padStart(2,'0');
+  const sh=new Date(d.getTime()+8*3600e3);
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())+'（本机）· 北京 '+p(sh.getUTCHours())+':'+p(sh.getUTCMinutes());}
+async function load(){
+  $('appErr').textContent='';
+  try{
+    const r=await api('?action=list');const j=await r.json();
+    DATA=j.inquiries||[];if(j.statuses)STATUSES=j.statuses;
+    const sel=$('fStatus'),cur=sel.value;sel.innerHTML='<option value="">全部状态</option>'+STATUSES.map(s=>'<option>'+esc(s)+'</option>').join('');sel.value=cur;
+    render();
+  }catch(e){if(e.message!=='unauthorized')$('appErr').textContent='读取失败：'+e.message;}
+}
+function render(){
+  const q=$('q').value.trim().toLowerCase(),st=$('fStatus').value;
+  const rows=DATA.filter(r=>(!st||r.status===st)&&(!q||JSON.stringify(r.fields).toLowerCase().includes(q)||(r.note||'').toLowerCase().includes(q)));
+  const now=Date.now(),d7=DATA.filter(r=>now-new Date(r.createdAt)<7*864e5).length,d30=DATA.filter(r=>now-new Date(r.createdAt)<30*864e5).length;
+  const fresh=DATA.filter(r=>r.status==='新询盘').length,mailBad=DATA.filter(r=>r.mail&&r.mail!=='已发送').length;
+  $('stats').innerHTML=[['全部',DATA.length],['近 7 天',d7],['近 30 天',d30],['待处理',fresh],['邮件未发出',mailBad]].map(([k,v])=>'<div class="stat"><b>'+v+'</b><span>'+k+'</span></div>').join('');
+  if(!rows.length){$('list').innerHTML='<div class="empty">'+(DATA.length?'没有符合条件的询盘':'还没有询盘')+'</div>';return;}
+  const hash=location.hash.slice(1);
+  $('list').innerHTML=rows.map(r=>{const f=r.fields||{};
+    const mailCls=r.mail==='已发送'?'ok':(r.mail==='发送中'?'warn':'bad');
+    const src=f['来源 Source']||'';const ad=/gclid|gbraid|wbraid/.test(src);
+    return '<div class="card'+(r.status==='新询盘'?' new':'')+(r.id===hash?' hl':'')+'" id="c-'+esc(r.id)+'">'+
+      '<div class="head"><div class="who">'+esc(f['姓名 Name']||'(未填姓名)')+'<small>'+esc(f['公司 Company']||'')+'</small></div>'+
+      '<div class="meta">'+esc(r.id)+' · '+esc(fmt(r.createdAt))+(r.country?' · '+esc(r.country)+(r.city?' '+esc(r.city):''):'')+'</div></div>'+
+      '<div class="grid">'+
+        '<div class="kv"><i>邮箱</i>'+(f.email?'<a href="mailto:'+esc(f.email)+'?subject='+encodeURIComponent('Re: Your inquiry - Bilateral Electronics')+'">'+esc(f.email)+'</a>':'')+'</div>'+
+        '<div class="kv"><i>电话</i>'+esc(f['电话 Phone'])+'</div>'+
+        '<div class="kv"><i>意向</i>'+esc(f['意向 Interest'])+'</div>'+
+        '<div class="kv"><i>来源</i>'+(ad?'<span class="pill warn">Google 广告</span> ':'')+esc(src)+'</div>'+
+        '<div class="kv"><i>页面</i>'+esc(f['页面 Page'])+'</div>'+
+      '</div>'+
+      '<div class="msg">'+esc(f['需求 Message'])+'</div>'+
+      (r.fileNote?'<div class="kv" style="margin-top:8px"><i>附件说明</i>'+esc(r.fileNote)+'</div>':'')+
+      '<div class="row">'+
+        '<select data-id="'+esc(r.id)+'" class="st">'+STATUSES.map(s=>'<option'+(s===r.status?' selected':'')+'>'+esc(s)+'</option>').join('')+'</select>'+
+        '<span class="pill '+mailCls+'">邮件：'+esc(r.mail||'')+'</span>'+
+        (r.file?'<button class="btn dl" data-id="'+esc(r.id)+'">下载附件 '+esc(r.file.name)+'</button>':'')+
+        '<textarea class="note" data-id="'+esc(r.id)+'" placeholder="跟进备注（自动保存）">'+esc(r.note||'')+'</textarea>'+
+      '</div></div>';}).join('');
+  if(hash){const el=document.getElementById('c-'+hash);if(el)el.scrollIntoView({block:'center'});}
+}
+async function save(id,patch){
+  try{const r=await api('',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'status',id,...patch})});
+    const j=await r.json();if(!j.ok)throw new Error(j.error||'保存失败');
+    const i=DATA.findIndex(x=>x.id===id);if(i>=0)DATA[i]=j.inquiry;
+  }catch(e){if(e.message!=='unauthorized')alertBox('保存失败：'+e.message);}
+}
+function alertBox(m){$('appErr').textContent=m;setTimeout(()=>{if($('appErr').textContent===m)$('appErr').textContent='';},6000);}
+$('list').addEventListener('change',e=>{const t=e.target;if(t.classList.contains('st')){save(t.dataset.id,{status:t.value}).then(render);}});
+$('list').addEventListener('focusout',e=>{const t=e.target;if(t.classList.contains('note')){const r=DATA.find(x=>x.id===t.dataset.id);if(r&&(r.note||'')!==t.value)save(t.dataset.id,{note:t.value});}});
+$('list').addEventListener('click',async e=>{const b=e.target.closest('.dl');if(!b)return;
+  b.disabled=true;try{const r=await api('?action=file&id='+encodeURIComponent(b.dataset.id));if(!r.ok)throw new Error('HTTP '+r.status);
+    const blob=await r.blob();const rec=DATA.find(x=>x.id===b.dataset.id);const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=rec&&rec.file?rec.file.name:'attachment';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},2000);
+  }catch(err){if(err.message!=='unauthorized')alertBox('下载失败：'+err.message);}b.disabled=false;});
+$('q').addEventListener('input',render);$('fStatus').addEventListener('change',render);
+$('refresh').addEventListener('click',load);
+$('exportCsv').addEventListener('click',()=>{
+  const head=['提交时间(UTC)','国家','城市'].concat(FIELDS,['附件','邮件','状态','备注','ID']);
+  const lines=[head].concat(DATA.map(r=>[r.createdAt,r.country,r.city].concat(FIELDS.map(k=>(r.fields||{})[k]),[r.file?r.file.name:'',r.mail,r.status,r.note,r.id])));
+  const csv='﻿'+lines.map(l=>l.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='官网询盘_'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();setTimeout(()=>a.remove(),1000);
+});
+function logout(msg){KEY='';store('bld_admin',null);$('app').classList.add('hidden');$('loginBox').classList.remove('hidden');$('loginErr').textContent=msg||'';}
+$('logout').addEventListener('click',()=>logout());
+$('loginForm').addEventListener('submit',async e=>{e.preventDefault();KEY=$('pw').value;$('loginErr').textContent='';
+  try{const r=await fetch('/api/admin?action=list',{headers:{'x-admin-key':KEY}});
+    if(r.status===401){$('loginErr').textContent='密码不对';return;}
+    store('bld_admin',KEY);enter();
+  }catch(err){$('loginErr').textContent='连不上服务器：'+err.message;}});
+function enter(){$('loginBox').classList.add('hidden');$('app').classList.remove('hidden');load();}
+window.addEventListener('hashchange',render);
+(function(){const k=store('bld_admin');if(k){KEY=k;enter();}})();
+</script>
+</body>
+</html>
