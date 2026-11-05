@@ -78,11 +78,11 @@ export async function listRecords() {
 /* ---------------- 邮件 ---------------- */
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-export async function sendInquiryMail(rec, attachment) {
+function makeTransport() {
   const user = process.env.SMTP_USER || 'sales@bilateral.top';
   if (!process.env.SMTP_PASS && !process.env.SMTP_INSECURE_TEST) throw new Error('SMTP_PASS 未设置');
   const port = Number(process.env.SMTP_PORT || 465);
-  const transport = nodemailer.createTransport({
+  return nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.qiye.aliyun.com',
     port,
     secure: process.env.SMTP_SECURE ? process.env.SMTP_SECURE === 'true' : port === 465,
@@ -90,6 +90,16 @@ export async function sendInquiryMail(rec, attachment) {
     connectionTimeout: 10000, greetingTimeout: 10000, socketTimeout: 20000,
     tls: process.env.SMTP_INSECURE_TEST ? { rejectUnauthorized: false } : undefined,
   });
+}
+
+/* 健康检查用：真的登录一次 SMTP（不发信），密码改了、邮箱被限制都能查出来 */
+export async function verifySmtp() {
+  await makeTransport().verify();
+}
+
+export async function sendInquiryMail(rec, attachment) {
+  const user = process.env.SMTP_USER || 'sales@bilateral.top';
+  const transport = makeTransport();
 
   const f = rec.fields;
   const site = process.env.SITE_URL || 'https://bilateral.top';
