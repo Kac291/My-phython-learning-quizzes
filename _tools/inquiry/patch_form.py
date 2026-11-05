@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-"""Patch inquiry form on index.html / en/index.html: site API primary, GAS + FormSubmit backup,
+"""Patch inquiry form on index.html / en/index.html: site API primary, GAS backup (FormSubmit removed 2026-11),
 mailto fallback, conversion only on confirmed delivery, source tracking."""
 import re
 import sys
 from pathlib import Path
 
 GAS_URL = sys.argv[2] if len(sys.argv) > 2 else ""
-FS_AJAX = "https://formsubmit.co/ajax/3e1df4376c519106335da6f5a4b9415a"
 
 CSS = r"""
 #fRefLine:has(b:empty){display:none}
@@ -22,7 +21,7 @@ CSS = r"""
 BLDCONV = r"""window.bldConv=function(channel){
   try{
     gtag('event','generate_lead',{form:'inquiry',page_lang:document.documentElement.lang,inquiry_channel:channel||''});
-    /* 只有询盘确认送达（官网后台、Google 表格或 FormSubmit 返回成功）才调用这里，Google Ads 转化 = 真实收到的询盘 */
+    /* 只有询盘确认送达（官网后台或 Google 表格返回成功）才调用这里，Google Ads 转化 = 真实收到的询盘 */
     if(BLD_ADS.label){gtag('event','conversion',{send_to:BLD_ADS.id+'/'+BLD_ADS.label,transport_type:'beacon'});}
   }catch(e){}
 };
@@ -51,10 +50,10 @@ LOST = ('<p class="f-lost" id="fLost" data-zh="附件未能随表单上传，请
 SUBMIT_JS = r"""/* 询盘发送（任何一步成功才算送达，才记 Google Ads 转化）：
    ① 官网自己的接收程序 /api/inquiry：存进官网询盘后台 + 用 sales@ 发邮件到 sales@ 和 163，
       同时抄一份到 Google 表格做第二份记录（只记录不重复发信）；
-   ② ①不通 → Google 表格 + 邮件；③ 再不通 → FormSubmit；
-   ④ 全都不通 → 存进访客浏览器的待发箱并提示用邮箱发送，访客下次打开本站时自动补发。
+   ② ①不通 → Google 表格 + 邮件；
+   ③ 都不通 → 存进访客浏览器的待发箱并提示用邮箱发送，访客下次打开本站时自动补发。
    每条询盘有唯一编号，重试/补发不会重复记录。 */
-const BLD_FORM={api:'/api/inquiry',gas:'__GAS_URL__',fs:'__FS_AJAX__',apiMax:4*1024*1024};
+const BLD_FORM={api:'/api/inquiry',gas:'__GAS_URL__',apiMax:4*1024*1024};
 let bldFileLost=false;
 function bldTimeout(ms){const c=new AbortController();setTimeout(()=>c.abort(),ms);return c.signal;}
 function bldFields(){const o={};for(const el of form.elements){if(!el.name||el.name[0]==='_'||el.type==='file')continue;o[el.name]=el.value;}return o;}
@@ -80,15 +79,6 @@ async function bldSendGAS(fields,file,mail){
   if(!j||j.success!==true)throw new Error('gas '+(j&&j.error));
   return j;
 }
-async function bldSendFS(fields,note){
-  const fd=new FormData();
-  for(const el of form.elements){if(el.name&&el.name[0]==='_'&&el.name!=='_next'&&el.type!=='file')fd.append(el.name,el.value);}
-  for(const k in fields)fd.append(k,fields[k]);
-  if(note)fd.append('附件 Attachment',note);
-  const r=await fetch(BLD_FORM.fs,{method:'POST',headers:{'Accept':'application/json'},body:fd,signal:bldTimeout(20000)});
-  const j=await r.json().catch(()=>null);
-  if(!r.ok||!j||String(j.success)!=='true')throw new Error('fs '+r.status);
-}
 /* 依次尝试各通道，返回送达的通道名；都失败返回空字符串。附件没送到时 bldFileLost=true */
 async function bldDeliver(fields,file){
   bldFileLost=false;
@@ -100,17 +90,14 @@ async function bldDeliver(fields,file){
     const g=bldSendGAS(fields,needFile?file:null,needMail);
     if(needMail||needFile){
       let ok=false;try{await g;ok=true;}catch(err){}
-      if(!ok&&needMail){try{await bldSendFS(fields,file?'客户上传了附件 '+file.name+'，请在官网询盘后台查看或向客户索取':'');}catch(err){}}
       if(!ok&&needFile)bldFileLost=true;
     }else g.catch(()=>{});
     return 'site';
   }
   try{
     const j=await bldSendGAS(fields,file,true);
-    if(j.mailed===false){try{await bldSendFS(fields,file?'客户上传了附件 '+file.name+'，见 Google Drive「官网询盘附件」':'');}catch(err){}}
     return 'sheet';
   }catch(err){}
-  try{await bldSendFS(fields,file?'客户上传了附件 '+file.name+'，但未能送达，请向客户索取图纸':'');bldFileLost=!!file;return 'formsubmit';}catch(err){}
   return '';
 }
 /* 待发箱：两条通道都失败的询盘先存在访客浏览器里 */
@@ -223,7 +210,7 @@ def patch(path: Path):
     sub1(r"(<div class=\"form-ok\" id=\"formOk\">.*?<span class=\"mono\">INQUIRY LOGGED[^<]*</span>)",
          lambda m: m.group(1) + "\n" + REFID + "\n" + lost)
     # submit handler
-    js = SUBMIT_JS.replace("__GAS_URL__", GAS_URL).replace("__FS_AJAX__", FS_AJAX)
+    js = SUBMIT_JS.replace("__GAS_URL__", GAS_URL)
     sub1(r"form\.addEventListener\('submit',async e=>\{.*?\n\}\);\n(?=\(function\(\)\{const ff=)", js)
     # 繁体转换表补上新文案里缺的字
     m = re.search(r"const TW_PAIRS='([^']*)'", h)

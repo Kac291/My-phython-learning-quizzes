@@ -5,18 +5,36 @@ import { FIELDS, PREFIX, json, saveFile, readJSON, sendInquiryMail, safeName } f
 
 const MAX_FILE = 4 * 1024 * 1024; // Vercel 函数请求体上限约 4.5MB；更大的附件网页会转交 Google 备份
 
+// 浏览器关了 JavaScript 时，表单会直接提交到这里（form action="/api/inquiry"）：
+// 这种请求 Accept 里有 text/html，成功就跳回原页面显示「已发送」，失败给一个能用邮箱发送的页面，而不是一段 JSON。
+// 网页里的 fetch 不带 text/html，照旧返回 JSON。
+function reply(request, fd, obj, status = 200) {
+  if (!(request.headers.get('accept') || '').includes('text/html')) return json(obj, status);
+  if (obj.success) {
+    const next = String((fd && fd.get('_next')) || '');
+    const back = /^https:\/\/bilateral\.top\/[^\s]*$/.test(next) ? next : '/?sent=1#contact';
+    return Response.redirect(new URL(back, request.url), 303);
+  }
+  const html = '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<title>Inquiry not sent</title><body style="font-family:Arial,sans-serif;max-width:560px;margin:60px auto;padding:0 16px;line-height:1.7">' +
+    '<h2>询盘没有发出 / Your inquiry could not be sent</h2>' +
+    '<p>请直接发邮件给我们 / Please email us directly: <a href="mailto:sales@bilateral.top">sales@bilateral.top</a></p>' +
+    '<p><a href="/#contact">← 返回 / Back</a></p></body>';
+  return new Response(html, { status, headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' } });
+}
+
 export async function POST(request) {
   let fd;
   try {
     fd = await request.formData();
   } catch (e) {
-    return json({ success: false, error: 'bad body' }, 400);
+    return reply(request, null, { success: false, error: 'bad body' }, 400);
   }
-  if (String(fd.get('_honey') || '')) return json({ success: true, saved: true, mailed: true, id: 'ignored' });
+  if (String(fd.get('_honey') || '')) return reply(request, fd, { success: true, saved: true, mailed: true, id: 'ignored' });
 
   const fields = {};
   for (const k of FIELDS) fields[k] = String(fd.get(k) || '').slice(0, 5000).trim();
-  if (!fields.email && !fields['需求 Message']) return json({ success: false, error: 'empty' }, 400);
+  if (!fields.email && !fields['需求 Message']) return reply(request, fd, { success: false, error: 'empty' }, 400);
 
   // 询盘编号由网页生成（BLD-日期-随机码），访客重试或浏览器补发时编号不变，这里据此去重
   const now = new Date();
@@ -28,7 +46,7 @@ export async function POST(request) {
   const base = PREFIX + id + '/';
   try {
     const old = await readJSON(base + 'record.json');
-    if (old) return json({ success: true, saved: true, mailed: old.mail === '已发送', duplicate: true, id, fileSaved: !!old.file });
+    if (old) return reply(request, fd, { success: true, saved: true, mailed: old.mail === '已发送', duplicate: true, id, fileSaved: !!old.file });
   } catch (e) {}
   const errors = [];
   const h = request.headers;
@@ -92,7 +110,7 @@ export async function POST(request) {
 
   const ok = saved || mailed;
   if (errors.length) console.error('inquiry', id, errors.join(' | '));
-  return json({ success: ok, saved, mailed, id, fileSaved: !!fileRec }, ok ? 200 : 500);
+  return reply(request, fd, { success: ok, saved, mailed, id, fileSaved: !!fileRec }, ok ? 200 : 500);
 }
 
 // 健康检查：GET /api/inquiry → {ok:true}（外联脚本每小时检查一次用）
