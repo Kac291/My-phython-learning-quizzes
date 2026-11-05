@@ -1,7 +1,7 @@
 // 官网询盘接收：POST /api/inquiry（multipart 表单）
 // 顺序：①附件存 Blob ②询盘记录存 Blob ③用 sales@ 发邮件到 sales@ + 163 ④把邮件结果写回记录
 // 存下来或发出邮件任意一个成功，就返回 success；网页据此才记 Google Ads 转化。
-import { FIELDS, PREFIX, json, saveFile, readJSON, sendInquiryMail, safeName } from './_lib.js';
+import { FIELDS, PREFIX, json, saveFile, readJSON, sendInquiryMail, verifySmtp, safeName } from './_lib.js';
 
 const MAX_FILE = 4 * 1024 * 1024; // Vercel 函数请求体上限约 4.5MB；更大的附件网页会转交 Google 备份
 
@@ -113,11 +113,30 @@ export async function POST(request) {
   return reply(request, fd, { success: ok, saved, mailed, id, fileSaved: !!fileRec }, ok ? 200 : 500);
 }
 
-// 健康检查：GET /api/inquiry → {ok:true}（外联脚本每小时检查一次用）
-export async function GET() {
-  return json({
+// 健康检查：GET /api/inquiry → {ok, blob, smtp}（外联脚本每小时检查一次用）
+// 加 ?smtp=1 会真的登录一次 SMTP（不发信），结果 smtp_login；同一实例 10 分钟内复用结果，免得被刷接口时频繁登录邮箱。
+let smtpCache = null;
+const SMTP_CACHE_MS = 10 * 60 * 1000;
+
+export async function GET(request) {
+  const out = {
     ok: true,
     blob: !!(process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID || process.env.BLD_FAKE_STORE_DIR),
     smtp: !!(process.env.SMTP_PASS || process.env.SMTP_INSECURE_TEST),
-  });
+  };
+  let want = false;
+  try { want = new URL(request.url).searchParams.get('smtp') === '1'; } catch (e) {}
+  if (want && out.smtp) {
+    if (!smtpCache || Date.now() - smtpCache.at > SMTP_CACHE_MS) {
+      try {
+        await verifySmtp();
+        smtpCache = { at: Date.now(), ok: true };
+      } catch (e) {
+        smtpCache = { at: Date.now(), ok: false, err: [e.code, e.responseCode].filter(Boolean).join(' ') || 'error' };
+      }
+    }
+    out.smtp_login = smtpCache.ok;
+    if (!smtpCache.ok) out.smtp_error = smtpCache.err;
+  }
+  return json(out);
 }
