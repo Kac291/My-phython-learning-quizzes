@@ -921,6 +921,23 @@ document.addEventListener('click',function(e){
   }catch(err){}
 },true);
 </script>
+<style id="bld-quick-css">
+.hero-quick{margin-top:clamp(18px,3vh,30px);max-width:760px}
+.hero-quick .hq-lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.3em;color:var(--red-bright);text-transform:uppercase;margin-bottom:10px}
+.hero-quick .hq-row{display:flex;gap:10px;flex-wrap:wrap}
+.hero-quick input{flex:1 1 200px;min-width:0;height:48px;padding:0 14px;background:transparent;border:1px solid var(--ink-30);color:var(--ink);font:inherit;font-size:15px;border-radius:0;outline:none;transition:border-color .2s}
+.hero-quick input.hq-need{flex:2 1 280px}
+.hero-quick input:focus{border-color:var(--red-bright)}
+.hero-quick input::placeholder{color:var(--ink-50)}
+.hero-quick button{flex:0 0 auto;height:48px;padding:0 26px;background:var(--red);color:#fff;border:0;font:inherit;font-size:15px;letter-spacing:.08em;cursor:pointer;transition:background .2s}
+.hero-quick button:hover{background:var(--red-bright)}
+.hero-quick button:disabled{opacity:.6;cursor:default}
+.hero-quick .hq-note{margin-top:9px;font-size:12.5px;color:var(--ink-50)}
+.hero-quick .hq-msg{margin-top:9px;font-size:14px;color:var(--ink);display:none}
+.hero-quick .hq-msg.err{color:var(--red-bright)}
+.hero-quick .hq-msg a{text-decoration:underline}
+@media(max-width:640px){.hero-quick button{flex:1 1 100%}}
+</style>
 </head>
 <body>
 <canvas id="ink"></canvas>
@@ -975,6 +992,17 @@ document.addEventListener('click',function(e){
       <a class="cta" href="#oem-xref"><span data-zh="按件号查找" data-en="Search Part Numbers">按料號查找</span><span class="ar">→</span></a>
       <a class="cta-line" href="#contact" data-zh="询价 / 发图纸" data-en="Request a Quote">詢價 / 發圖紙</a>
     </div>
+<form class="hero-quick rv" id="quickForm" novalidate>
+<div class="hq-lab">快速詢價</div>
+<div class="hq-row">
+<input type="email" id="qEmail" class="hq-mail" placeholder="公司信箱" autocomplete="email" aria-label="公司信箱">
+<input type="text" id="qNeed" class="hq-need" placeholder="原廠料號或需求，如 0200-36630 × 5" aria-label="快速詢價">
+<button type="submit" id="qBtn">取得報價 →</button>
+</div>
+<div class="hq-note" id="qNote">工程師 24 小時內回覆 · 無需填寫完整表單</div>
+<div class="hq-msg" id="qMsg" role="status"></div>
+</form>
+
     <div class="hero-toc rv">
       <a href="#about"><i>01</i><span data-zh="公司" data-en="Company">公司</span></a>
       <a href="#materials"><i>02</i><span data-zh="材料" data-en="Materials">材料</span></a>
@@ -1905,6 +1933,38 @@ seg.addEventListener('click',function(e){var b=e.target.closest&&e.target.closes
   try{var cur=null,off=0;for(var i=0;i<ids.length;i++){var s=document.getElementById(ids[i]);if(!s)continue;var t=s.getBoundingClientRect().top;if(t<=innerHeight*0.4){cur=ids[i];off=-t;}}
     if(cur)sessionStorage.setItem('bld-pos',JSON.stringify({id:cur,off:off,t:Date.now()}));}catch(_){}
   location.href=l==='en'?'/en/':'/';},true);
+})();
+</script>
+<script id="bld-quick-js">
+/* 首屏快速询价：只填邮箱 + 件号/需求，走与正式表单相同的送达通道和转化统计 */
+(function(){
+  var f=document.getElementById('quickForm');if(!f||typeof bldDeliver!=='function')return;
+  var L={"ok": "已收到，工程師會在 24 小時內回覆到您的信箱。編號 ", "fail": "傳送未成功，請直接寄信至 ", "bad": "請填寫正確的信箱和料號/需求", "sending": "傳送中…"};
+  var em=document.getElementById('qEmail'),nd=document.getElementById('qNeed'),bt=document.getElementById('qBtn'),msg=document.getElementById('qMsg'),note=document.getElementById('qNote');
+  var pending='',started=false;
+  function show(t,err,mail){msg.textContent=t;msg.className='hq-msg'+(err?' err':'');msg.style.display='block';
+    if(mail){var a=document.createElement('a');a.href='mailto:sales@bilateral.top?subject='+encodeURIComponent('Inquiry '+nd.value.trim().slice(0,60))+'&body='+encodeURIComponent(nd.value.trim());a.textContent='sales@bilateral.top';msg.appendChild(a);}}
+  [em,nd].forEach(function(el){el.addEventListener('focus',function(){if(started)return;started=true;try{gtag('event','quick_quote_start',{page_lang:document.documentElement.lang});}catch(e){}});});
+  try{var pn=new URLSearchParams(location.search).get('pn');if(pn)nd.value=pn;}catch(e){}
+  f.addEventListener('submit',async function(e){
+    e.preventDefault();if(bt.disabled)return;
+    var mail=em.value.trim(),need=nd.value.trim();
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)||need.length<2){show(L.bad,true);(need.length<2&&/@/.test(mail)?nd:em).focus();return;}
+    var old=bt.textContent;bt.disabled=true;bt.textContent=L.sending;msg.style.display='none';
+    if(!pending)pending=bldNewId();
+    var g=function(id){var el=document.getElementById(id);return el?el.value:'';};
+    var fields={'来源 Source':g('fSrc')||'direct','页面 Page':(g('fPage')||location.pathname)+' (quick)','姓名 Name':'(快速询价 Quick quote)','公司 Company':'','email':mail,'电话 Phone':'','意向 Interest':'','需求 Message':need,'询盘编号 ID':pending};
+    var ch='';try{ch=await bldDeliver(fields,null);}catch(err){}
+    if(ch){
+      try{bldOutboxSave(bldOutbox().filter(function(it){return it.fields['询盘编号 ID']!==pending;}));}catch(err){}
+      try{bldConv(ch+'-quick');}catch(err){}
+      f.querySelector('.hq-row').style.display='none';note.style.display='none';show(L.ok+pending,false);pending='';
+    }else{
+      try{var box=bldOutbox().filter(function(it){return it.fields['询盘编号 ID']!==pending;});box.push({t:Date.now(),fields:fields});bldOutboxSave(box);}catch(err){}
+      try{gtag('event','inquiry_failed',{page_lang:document.documentElement.lang,form:'quick'});}catch(err){}
+      show(L.fail,true,true);bt.disabled=false;bt.textContent=old;
+    }
+  });
 })();
 </script>
 </body>
