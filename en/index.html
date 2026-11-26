@@ -934,6 +934,14 @@ document.addEventListener('click',function(e){
 .hero-quick .hq-msg.err{color:var(--red-bright)}
 .hero-quick .hq-msg a{text-decoration:underline}
 @media(max-width:640px){.hero-quick button{flex:1 1 100%}}
+/* 窗口较矮（如 Mac 非全屏）时收紧首屏，保证快速询价框不用滚动就能看到 */
+@media (min-width:901px) and (max-height:840px){
+.hero h1{font-size:clamp(40px,min(7.2vw,11vh),96px)!important}
+.hero-quick{margin-top:14px}
+.hero-quick .hq-note{display:none}
+.hero-cta-row .cta{padding-top:13px;padding-bottom:13px}
+}
+@media (min-width:901px) and (max-height:640px){.hero-quick .hq-lab{display:none}.hero-eyebrow{margin-bottom:8px}}
 </style>
 </head>
 <body>
@@ -986,13 +994,13 @@ document.addEventListener('click',function(e){
 <a class="cta-line" data-en="Request a Quote" data-zh="询价 / 发图纸" href="#contact">Request a Quote</a>
 </div>
 <form class="hero-quick rv" id="quickForm" novalidate>
-<div class="hq-lab">QUICK QUOTE</div>
+<div class="hq-lab" data-zh="快速询价" data-en="Quick quote">Quick quote</div>
 <div class="hq-row">
-<input type="email" id="qEmail" class="hq-mail" placeholder="Work email" autocomplete="email" aria-label="Work email">
-<input type="text" id="qNeed" class="hq-need" placeholder="OEM part no. or need, e.g. 0200-36630 × 5" aria-label="QUICK QUOTE">
-<button type="submit" id="qBtn">Get a Quote →</button>
+<input type="email" id="qEmail" class="hq-mail" autocomplete="email" data-ph-zh="工作邮箱" data-ph-en="Work email" placeholder="Work email">
+<input type="text" id="qNeed" class="hq-need" data-ph-zh="原厂件号或需求，如 0200-36630 × 5" data-ph-en="OEM part no. or need, e.g. 0200-36630 × 5" placeholder="OEM part no. or need, e.g. 0200-36630 × 5">
+<button type="submit" id="qBtn"><span data-zh="获取报价" data-en="Get a Quote">Get a Quote</span> →</button>
 </div>
-<div class="hq-note" id="qNote">Engineer reply within 24 hours · no long form needed</div>
+<div class="hq-note" id="qNote" data-zh="工程师 24 小时内回复 · 无需填写完整表单" data-en="Engineer reply within 24 hours · no long form needed">Engineer reply within 24 hours · no long form needed</div>
 <div class="hq-msg" id="qMsg" role="status"></div>
 </form>
 
@@ -1894,7 +1902,8 @@ function showOk(){let t=false;['touchstart','wheel'].forEach(ev=>window.addEvent
 /* 首屏快速询价：只填邮箱 + 件号/需求，走与正式表单相同的送达通道和转化统计 */
 (function(){
   var f=document.getElementById('quickForm');if(!f||typeof bldDeliver!=='function')return;
-  var L={"ok": "Received — an engineer will reply to your email within 24 hours. Ref ", "fail": "Sending failed — please email ", "bad": "Please enter a valid email and a part number or requirement", "sending": "Sending…"};
+  var M={"zh": {"ok": "已收到，工程师会在 24 小时内回复到您的邮箱。编号 ", "fail": "发送未成功，请直接发邮件至 ", "bad": "请填写正确的邮箱和件号/需求", "sending": "发送中…"}, "en": {"ok": "Received — an engineer will reply to your email within 24 hours. Ref ", "fail": "Sending failed — please email ", "bad": "Please enter a valid email and a part number or requirement", "sending": "Sending…"}};
+  function L(){return M[/^en/i.test(document.documentElement.lang||'')?'en':'zh'];}
   var em=document.getElementById('qEmail'),nd=document.getElementById('qNeed'),bt=document.getElementById('qBtn'),msg=document.getElementById('qMsg'),note=document.getElementById('qNote');
   var pending='',started=false;
   function show(t,err,mail){msg.textContent=t;msg.className='hq-msg'+(err?' err':'');msg.style.display='block';
@@ -1904,8 +1913,8 @@ function showOk(){let t=false;['touchstart','wheel'].forEach(ev=>window.addEvent
   f.addEventListener('submit',async function(e){
     e.preventDefault();if(bt.disabled)return;
     var mail=em.value.trim(),need=nd.value.trim();
-    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)||need.length<2){show(L.bad,true);(need.length<2&&/@/.test(mail)?nd:em).focus();return;}
-    var old=bt.textContent;bt.disabled=true;bt.textContent=L.sending;msg.style.display='none';
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)||need.length<2){show(L().bad,true);(need.length<2&&/@/.test(mail)?nd:em).focus();return;}
+    var sp=bt.querySelector('span'),old=sp.textContent;bt.disabled=true;sp.textContent=L().sending;msg.style.display='none';
     if(!pending)pending=bldNewId();
     var g=function(id){var el=document.getElementById(id);return el?el.value:'';};
     var fields={'来源 Source':g('fSrc')||'direct','页面 Page':(g('fPage')||location.pathname)+' (quick)','姓名 Name':'(快速询价 Quick quote)','公司 Company':'','email':mail,'电话 Phone':'','意向 Interest':'','需求 Message':need,'询盘编号 ID':pending};
@@ -1913,13 +1922,31 @@ function showOk(){let t=false;['touchstart','wheel'].forEach(ev=>window.addEvent
     if(ch){
       try{bldOutboxSave(bldOutbox().filter(function(it){return it.fields['询盘编号 ID']!==pending;}));}catch(err){}
       try{bldConv(ch+'-quick');}catch(err){}
-      f.querySelector('.hq-row').style.display='none';note.style.display='none';show(L.ok+pending,false);pending='';
+      f.querySelector('.hq-row').style.display='none';note.style.display='none';show(L().ok+pending,false);pending='';
     }else{
       try{var box=bldOutbox().filter(function(it){return it.fields['询盘编号 ID']!==pending;});box.push({t:Date.now(),fields:fields});bldOutboxSave(box);}catch(err){}
       try{gtag('event','inquiry_failed',{page_lang:document.documentElement.lang,form:'quick'});}catch(err){}
-      show(L.fail,true,true);bt.disabled=false;bt.textContent=old;
+      show(L().fail,true,true);bt.disabled=false;sp.textContent=old;
     }
   });
+})();
+/* 切换语言时保持阅读位置：中英文字数不同会改变版面高度，切换后把原来正在看的那一段对回原处 */
+(function(){
+  var seg=document.getElementById('langSeg');if(!seg)return;
+  seg.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('button');if(!b||scrollY<40)return;
+    var nav=document.getElementById('nav'),top=(nav?nav.offsetHeight:80)+24,best=null;
+    [0.5,0.3,0.7].forEach(function(fx){[0,60,140].forEach(function(dy){
+      var el=document.elementFromPoint(innerWidth*fx,top+dy);
+      if(!el||(nav&&nav.contains(el))||el===document.body||el===document.documentElement||el.tagName==='CANVAS')return;
+      var h=el.getBoundingClientRect().height;if(!best||h<best.h)best={el:el,h:h};
+    });});
+    if(!best)return;
+    var chain=[],el=best.el;
+    while(el&&el!==document.body&&chain.length<10){chain.push([el,el.getBoundingClientRect().top]);el=el.parentElement;}
+    function fix(){for(var i=0;i<chain.length;i++){var c=chain[i];if(c[0].isConnected){var d=c[0].getBoundingClientRect().top-c[1];if(Math.abs(d)>1)window.scrollBy({top:d,left:0,behavior:'instant'});return;}}}
+    requestAnimationFrame(function(){fix();setTimeout(fix,120);setTimeout(fix,400);});
+  },true);
 })();
 </script>
 </body>
