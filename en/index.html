@@ -998,7 +998,7 @@ document.addEventListener('click',function(e){
 <div class="hq-row">
 <input type="email" id="qEmail" class="hq-mail" autocomplete="email" data-ph-zh="工作邮箱" data-ph-en="Work email" placeholder="Work email">
 <input type="text" id="qNeed" class="hq-need" data-ph-zh="原厂件号或需求，如 0200-36630 × 5" data-ph-en="OEM part no. or need, e.g. 0200-36630 × 5" placeholder="OEM part no. or need, e.g. 0200-36630 × 5">
-<button type="submit" id="qBtn"><span data-zh="获取报价" data-en="Get a Quote">Get a Quote</span> →</button>
+<button type="submit" id="qBtn"><span data-zh="立即询价" data-en="Get a Quote">Get a Quote</span> →</button>
 </div>
 <div class="hq-note" id="qNote" data-zh="工程师 24 小时内回复 · 无需填写完整表单" data-en="Engineer reply within 24 hours · no long form needed">Engineer reply within 24 hours · no long form needed</div>
 <div class="hq-msg" id="qMsg" role="status"></div>
@@ -1902,7 +1902,7 @@ function showOk(){let t=false;['touchstart','wheel'].forEach(ev=>window.addEvent
 /* 首屏快速询价：只填邮箱 + 件号/需求，走与正式表单相同的送达通道和转化统计 */
 (function(){
   var f=document.getElementById('quickForm');if(!f||typeof bldDeliver!=='function')return;
-  var M={"zh": {"ok": "已收到，工程师会在 24 小时内回复到您的邮箱。编号 ", "fail": "发送未成功，请直接发邮件至 ", "bad": "请填写正确的邮箱和件号/需求", "sending": "发送中…"}, "en": {"ok": "Received — an engineer will reply to your email within 24 hours. Ref ", "fail": "Sending failed — please email ", "bad": "Please enter a valid email and a part number or requirement", "sending": "Sending…"}};
+  var M={"zh": {"ok": "已收到，工程师会在 24 小时内回复到您的邮箱。Ref ", "fail": "发送未成功，请直接发邮件至 ", "bad": "请填写正确的邮箱和件号/需求", "sending": "发送中…"}, "en": {"ok": "Received — an engineer will reply to your email within 24 hours. Ref ", "fail": "Sending failed — please email ", "bad": "Please enter a valid email and a part number or requirement", "sending": "Sending…"}};
   function L(){return M[/^en/i.test(document.documentElement.lang||'')?'en':'zh'];}
   var em=document.getElementById('qEmail'),nd=document.getElementById('qNeed'),bt=document.getElementById('qBtn'),msg=document.getElementById('qMsg'),note=document.getElementById('qNote');
   var pending='',started=false;
