@@ -942,6 +942,13 @@ document.addEventListener('click',function(e){
 .hero-cta-row .cta{padding-top:13px;padding-bottom:13px}
 }
 @media (min-width:901px) and (max-height:640px){.hero-quick .hq-lab{display:none}.hero-eyebrow{margin-bottom:8px}}
+/* 英文导航更宽：1401–1680px 宽的窗口里收紧导航，避免把右上角的 昼夜/语言 按钮挤出原位 */
+@media (min-width:1401px) and (max-width:1680px){
+html[lang^="en"] .brand .en{display:none}
+html[lang^="en"] .nav-links{gap:clamp(14px,1.7vw,30px)}
+html[lang^="en"] .nav-links a{letter-spacing:.12em}
+}
+#nav>div:last-child{flex-shrink:0}
 </style>
 </head>
 <body>
